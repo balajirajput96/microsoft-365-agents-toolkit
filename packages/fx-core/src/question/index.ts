@@ -24,6 +24,7 @@ import {
   validateTeamsAppQuestionNode,
   syncManifestQuestionNode,
   kiotaRegenerateQuestion,
+  convertAadToNewSchemaQuestionNode,
 } from "./other";
 export * from "./constants";
 export * from "./create";
@@ -60,6 +61,9 @@ export class QuestionNodes {
   }
   deployAadManifest(): IQTreeNode {
     return deployAadManifestQuestionNode();
+  }
+  convertAadToNewSchema(): IQTreeNode {
+    return convertAadToNewSchemaQuestionNode();
   }
   createNewEnv(): IQTreeNode {
     return createNewEnvQuestionNode();

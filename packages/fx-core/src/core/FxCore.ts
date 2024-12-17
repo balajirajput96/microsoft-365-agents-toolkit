@@ -177,6 +177,7 @@ import { addExistingPlugin } from "../component/generator/copilotExtension/helpe
 import { DeclarativeAgentBotContext } from "../component/feature/declarativeAgentBotContext";
 import { create } from "../component/feature/createDeclarativeAgentBot";
 import { featureFlagManager, FeatureFlags } from "../common/featureFlags";
+import { AadManifestHelper } from "../component/driver/aad/utility/aadManifestHelper";
 import { v4 as uuidv4, validate as uuidValidate } from "uuid";
 
 export class FxCore {
@@ -838,6 +839,43 @@ export class FxCore {
     await buildAadManifest(Context, manifestTemplatePath, manifestOutputPath);
     return ok(undefined);
   }
+
+  @hooks([
+    ErrorContextMW({ component: "FxCore", stage: "convertAadToNewSchema", reset: true }),
+    ErrorHandlerMW,
+    QuestionMW("convertAadToNewSchema"),
+  ])
+  async convertAadToNewSchema(inputs: Inputs): Promise<Result<undefined, FxError>> {
+    const manifestTemplatePath: string = inputs[QuestionNames.AadAppManifestFilePath];
+    if (!(await fs.pathExists(manifestTemplatePath))) {
+      return err(new FileNotFoundError("convertAadToNewSchema", manifestTemplatePath));
+    }
+
+    const manifest = await fs.readJson(manifestTemplatePath);
+    const context = createContext();
+    const confirmRes = await context.userInteraction.showMessage(
+      "warn",
+      getLocalizedString("core.convertAadToNewSchema.warning"),
+      true,
+      getLocalizedString("core.convertAadToNewSchema.continue")
+    );
+
+    if (confirmRes.isErr()) {
+      return err(confirmRes.error);
+    } else if (confirmRes.value !== getLocalizedString("core.convertAadToNewSchema.continue")) {
+      return err(new UserCancelError());
+    }
+
+    const result = AadManifestHelper.manifestToApplication(manifest);
+    await fs.writeJson(manifestTemplatePath, result, { spaces: 2 });
+    void (await context.userInteraction.showMessage(
+      "info",
+      getLocalizedString("core.convertAadToNewSchema.success"),
+      false
+    ));
+    return ok(undefined);
+  }
+
   /**
    * v3 only none lifecycle command
    */
