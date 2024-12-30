@@ -56,9 +56,16 @@ describe("Create sample project and open sample view to download sample Tests", 
       try {
         //open sample view from command palette
         const driver = VSBrowser.instance.driver;
+        await driver.sleep(Timeout.reloadWindow);
+
+        await RetryHandler.retry(async () => {
+          await execCommandIfExist("View: Toggle Full Screen");
+        });
+
         {
-          console.log("close editor tab");
           await new EditorView().closeAllEditors();
+          console.log("Closed all opened editor view.");
+
           console.log("open new sample tab from tree view");
           await RetryHandler.retry(async () => {
             await execCommandIfExist(

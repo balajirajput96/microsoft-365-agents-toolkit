@@ -47,12 +47,15 @@ describe("Openning Quick Start Tests", function () {
     async function () {
       const driver = VSBrowser.instance.driver;
       await driver.sleep(Timeout.reloadWindow);
-      await new EditorView().closeAllEditors();
 
       // get started page for "Build a Notification Bot"
       await RetryHandler.retry(async () => {
         await execCommandIfExist("View: Toggle Full Screen");
       });
+
+      await new EditorView().closeAllEditors();
+      console.log("Closed all opened editor view.");
+
       await execCommandIfExist(
         CommandPaletteCommands.QuickStartCommand,
         Timeout.webView
@@ -78,21 +81,21 @@ describe("Openning Quick Start Tests", function () {
         By.css(".button-container .monaco-button")
       );
       const type1Item1ButtonValue = await type1Item1Button.getText();
-      expect(type1Item1ButtonValue).has.string("Run Prerequisite Checker");
-      console.log('Found the button "Run Prerequisite Checker"');
+      expect(type1Item1ButtonValue).has.string("Check Prerequisites");
+      console.log('Found the button "Check Prerequisites"');
 
       // Check item "Create a notification bot"
       const type1Item2 = await getExpandedButton(
         webView,
         false,
-        "Create a notification bot"
+        "Build a notification bot"
       );
       const type1Item2Button = await type1Item2?.findElement(
         By.css(".button-container .monaco-button")
       );
       const type1Item2ButtonValue = await type1Item2Button.getText();
-      expect(type1Item2ButtonValue).has.string("Build a notification bot");
-      console.log('Found the button "Build a notification bot"');
+      expect(type1Item2ButtonValue).has.string("Build Notification Bot");
+      console.log('Found the button "Build Notification Bot"');
 
       // get started page for "Build a Declarative Agent"
       await execCommandIfExist(
@@ -135,8 +138,8 @@ describe("Openning Quick Start Tests", function () {
         By.css(".button-container .monaco-button")
       );
       const type2Item2ButtonValue = await type2Item2Button.getText();
-      expect(type2Item2ButtonValue).has.string("Build a declarative agent");
-      console.log('Found the button "Build a declarative agent"');
+      expect(type2Item2ButtonValue).has.string("Build Declarative Agent");
+      console.log('Found the button "Build Declarative Agent"');
     }
   );
 });
