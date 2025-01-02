@@ -9,6 +9,7 @@ import { PanelType } from "../../src/controls/PanelType";
 import { WebviewPanel } from "../../src/controls/webviewPanel";
 import * as globalVariables from "../../src/globalVariables";
 import {
+  defaultWelcomePageKey,
   openFolderHandler,
   openLifecycleTreeview,
   openSamplesHandler,
@@ -20,6 +21,7 @@ import { ExtTelemetry } from "../../src/telemetry/extTelemetry";
 import {
   TelemetryEvent,
   TelemetryProperty,
+  TelemetryTriggerFrom,
   TelemetryUpdateAppReason,
 } from "../../src/telemetry/extTelemetryEvents";
 import * as commonUtils from "../../src/utils/commonUtils";
@@ -44,6 +46,21 @@ describe("Control Handlers", () => {
         .stub(vscode.window, "showQuickPick")
         .resolves({ label: getDefaultString("teamstoolkit.walkthroughs.title") });
       await openWelcomeHandler();
+
+      sandbox.assert.calledOnceWithExactly(
+        executeCommands,
+        "workbench.action.openWalkthrough",
+        "TeamsDevApp.ms-teams-vscode-extension#teamsToolkitGetStarted"
+      );
+    });
+
+    it("opens default walkthrough", async () => {
+      sandbox.stub(featureFlagManager, "getBooleanValue").returns(false);
+      sandbox.stub(manifestUtils, "readAppManifest").resolves(ok({} as TeamsAppManifest));
+      sandbox.stub(manifestUtils, "getCapabilities").returns(["bot"]);
+      const executeCommands = sandbox.stub(vscode.commands, "executeCommand");
+      const sendTelemetryEvent = sandbox.stub(ExtTelemetry, "sendTelemetryEvent");
+      await openWelcomeHandler(TelemetryTriggerFrom.Auto, defaultWelcomePageKey);
 
       sandbox.assert.calledOnceWithExactly(
         executeCommands,

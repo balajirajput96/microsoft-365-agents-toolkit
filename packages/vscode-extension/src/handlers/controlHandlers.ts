@@ -26,6 +26,8 @@ import { getWalkThroughId } from "../utils/projectStatusUtils";
 import { getTriggerFromProperty } from "../utils/telemetryUtils";
 import { getDefaultString } from "../utils/localizeUtils";
 
+export const defaultWelcomePageKey = "defaultWelcomePage";
+
 export async function openLifecycleTreeview(args?: any[]) {
   ExtTelemetry.sendTelemetryEvent(
     TelemetryEvent.ClickOpenLifecycleTreeview,
@@ -38,6 +40,8 @@ export async function openLifecycleTreeview(args?: any[]) {
   }
 }
 
+// args[0] is telemetry trigger from
+// args[1] is whether to open default welcome page. Pass const var defaultWelcomePageKey to open default welcome page.
 export async function openWelcomeHandler(...args: unknown[]): Promise<Result<unknown, FxError>> {
   ExtTelemetry.sendTelemetryEvent(TelemetryEvent.GetStarted, getTriggerFromProperty(args));
   // Open different walkthrough depending on the project type
@@ -74,21 +78,26 @@ export async function openWelcomeHandler(...args: unknown[]): Promise<Result<unk
       "TeamsDevApp.ms-teams-vscode-extension#buildIntelligentApps"
     );
     return Promise.resolve(ok(data));
-  } else {
-    return await selectWalkthrough(args);
   }
-}
-
-export async function selectWalkthrough(...args: unknown[]): Promise<Result<unknown, FxError>> {
-  const TeamsToolkitOptionLabel = getDefaultString("teamstoolkit.walkthroughs.title");
-  const BuildNotificationBotWalkthroughArgs = "SideBar";
-  if (args.length > 0 && args[0] == BuildNotificationBotWalkthroughArgs) {
+  if (args.length > 0 && args[0] == (TelemetryTriggerFrom.SideBar as string)) {
     const data = await vscode.commands.executeCommand(
       "workbench.action.openWalkthrough",
       getWalkThroughId()
     );
     return Promise.resolve(ok(data));
   }
+  if (args.length > 1 && args[1] == defaultWelcomePageKey) {
+    const data = await vscode.commands.executeCommand(
+      "workbench.action.openWalkthrough",
+      getWalkThroughId()
+    );
+    return Promise.resolve(ok(data));
+  }
+  return await selectWalkthrough(args);
+}
+
+export async function selectWalkthrough(...args: unknown[]): Promise<Result<unknown, FxError>> {
+  const TeamsToolkitOptionLabel = getDefaultString("teamstoolkit.walkthroughs.title");
   const BuildingIntelligentAppsLabel = getDefaultString(
     "teamstoolkit.walkthroughs.buildIntelligentApps.title"
   );
