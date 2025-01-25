@@ -17,15 +17,17 @@ export class DeclarativeAgentBotContext {
   projectPath = "";
   backupPath = "";
   agentManifestPath = "";
-  agentId?: string;
+  agentId: string;
   teamsBotId?: string;
   multiTenant = false;
+  isProvisioned = false;
 
   static async create(
     platform: Platform,
     env: string,
     projectPath: string,
     declarativeAgentManifestPath: string,
+    agentId: string,
     multiTenant: boolean
   ): Promise<DeclarativeAgentBotContext> {
     const context = new DeclarativeAgentBotContext(
@@ -33,6 +35,7 @@ export class DeclarativeAgentBotContext {
       env,
       projectPath,
       declarativeAgentManifestPath,
+      agentId,
       multiTenant
     );
     await fs.ensureDir(context.backupPath);
@@ -44,12 +47,14 @@ export class DeclarativeAgentBotContext {
     env: string,
     projectPath: string,
     declarativeAgentManifestPath: string,
+    agentId: string,
     multiTenant: boolean
   ) {
     this.platform = platform;
     this.env = env;
     this.projectPath = projectPath;
     this.agentManifestPath = declarativeAgentManifestPath;
+    this.agentId = agentId;
     this.backupPath = path.join(this.projectPath, backupFolder);
     this.multiTenant = multiTenant;
   }

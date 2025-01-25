@@ -6,6 +6,7 @@ import { AxiosInstance } from "axios";
 import { PowerPlatformApiDiscovery } from "../common/powerPlatformApiDiscovery";
 import { WrappedAxiosClient } from "../common/wrappedAxiosClient";
 import { DeclarativeAgentBotDefinition } from "../component/feature/declarativeAgentDefinition";
+import { TOOLS } from "../common/globalVars";
 
 export class CopilotStudioClient {
   /**
@@ -30,22 +31,23 @@ export class CopilotStudioClient {
     try {
       const instance = this.createRequesterWithToken(token, tenantId);
       const response = await instance.post(
-        "/powervirtualagents/api/copilots/provisioning/upsert?api-version=1",
+        "/powervirtualagents/api/copilots/provisioning/upsert?api-version=2022-03-01-preview",
         declarativeAgentDefinition
       );
       return response.status === 200;
     } catch (e) {
+      TOOLS.logProvider.error("Failed to provision bot." + JSON.stringify(e.response.data));
       throw e;
     }
   }
 
   async getBot(token: string, declarativeAgentId: string, tenantId: string): Promise<string> {
+    let response;
     try {
       const instance = this.createRequesterWithToken(token, tenantId);
-      let response;
       do {
         response = await instance.get(
-          `/powervirtualagents/api/copilots/provisioning/copilot/${declarativeAgentId}/status?api-version=1`
+          `/powervirtualagents/api/copilots/provisioning/copilot/${declarativeAgentId}/status?api-version=2022-03-01-preview`
         );
         if (response.data.status !== "Provisioned") {
           // Wait for a short time before checking again
@@ -59,12 +61,13 @@ export class CopilotStudioClient {
       const botId = response.data.copilotStudioDetails.teamsBotInfo.id;
       return botId;
     } catch (e) {
+      TOOLS.logProvider.error("Failed to retrieve bot id." + JSON.stringify(e.response.data));
       throw e;
     }
   }
 
   getTenantIslandClusterEndpoint(tenantId: string): string {
-    const env = process.env.COPILOT_STUDIO_ENV === "test" ? "test" : "prod";
+    const env = process.env.COPILOT_STUDIO_ENV === "prod" ? "prod" : "preprod";
     const discovery = new PowerPlatformApiDiscovery(env);
     return discovery.getTenantIslandClusterEndpoint(tenantId);
   }

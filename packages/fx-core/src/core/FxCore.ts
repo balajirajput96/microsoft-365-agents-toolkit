@@ -2322,21 +2322,31 @@ export class FxCore {
       return err(new UserCancelError());
     }
 
+    const agentIdRes = await copilotGptManifestUtils.getAgentId(teamsManifestPath);
+    if (agentIdRes.isErr()) {
+      return err(agentIdRes.error);
+    }
+
     // Create a context for creating declarative agent bot
-    const declarativeAgentBotContext = await DeclarativeAgentBotContext.create(
+    const botContext = await DeclarativeAgentBotContext.create(
       inputs.platform,
       inputs.env,
       inputs.projectPath,
       declarativeAgentManifesRes.value,
+      agentIdRes.value,
       inputs[QuestionNames.MultiTenant]
     );
 
     // Do the actual creation
-    await create(declarativeAgentBotContext);
+    try {
+      await create(botContext);
+    } catch (error: unknown) {
+      return err(error as FxError);
+    }
 
     const successMessage = getLocalizedString(
       "core.createDeclarativeAgentBot.success",
-      declarativeAgentBotContext.teamsBotId
+      botContext.teamsBotId
     );
     void context.userInteraction.showMessage("info", successMessage, false);
 

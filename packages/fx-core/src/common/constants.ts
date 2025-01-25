@@ -72,8 +72,8 @@ export function getAppStudioEndpoint(): string {
 }
 
 export function getCopilotStudioEndpoint(): string {
-  return process.env.COPILOT_STUDIO_ENV === "test"
-    ? "https://api.test.powerplatform.com"
+  return process.env.COPILOT_STUDIO_ENV === "preprod"
+    ? "https://api.preprod.powerplatform.com"
     : "https://api.powerplatform.com";
 }
 

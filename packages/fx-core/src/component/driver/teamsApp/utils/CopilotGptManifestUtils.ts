@@ -170,6 +170,30 @@ export class CopilotGptManifestUtils {
     }
   }
 
+  public async getAgentId(teamsManifestPath: string): Promise<Result<string, FxError>> {
+    const teamsManifestRes = await manifestUtils._readAppManifest(teamsManifestPath);
+
+    if (teamsManifestRes.isErr()) {
+      return err(teamsManifestRes.error);
+    }
+    const agentId = teamsManifestRes.value.copilotExtensions
+      ? teamsManifestRes.value.copilotExtensions.declarativeCopilots?.[0].id
+      : teamsManifestRes.value.copilotAgents?.declarativeAgents?.[0].id;
+    if (!agentId) {
+      return err(
+        AppStudioResultFactory.UserError(
+          AppStudioError.TeamsAppRequiredPropertyMissingError.name,
+          AppStudioError.TeamsAppRequiredPropertyMissingError.message(
+            "copilotExtensions.declarativeCopilots.id",
+            teamsManifestPath
+          )
+        )
+      );
+    } else {
+      return ok(agentId);
+    }
+  }
+
   public async addAction(
     copilotGptPath: string,
     id: string,

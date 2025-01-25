@@ -9,7 +9,6 @@ import { AppPackageFolderName, IBot, InputsWithProjectPath } from "@microsoft/te
 import { copilotStudioClient } from "../../client/copilotStudioClient";
 import { CopilotStudioScopes } from "../../common/constants";
 import { TOOLS } from "../../common/globalVars";
-import { getUuid } from "../../common/stringUtils";
 import { MetadataV3 } from "../../common/versionMetadata";
 import { copilotGptManifestUtils } from "../driver/teamsApp/utils/CopilotGptManifestUtils";
 import { manifestUtils } from "../driver/teamsApp/utils/ManifestUtils";
@@ -21,6 +20,8 @@ const launchJsonFile = ".vscode/launch.json";
 const defaultOutputNames = {
   m365AppId: "M365_APP_ID",
   tenantId: "TEAMS_APP_TENANT_ID",
+  agentId: "AGENT_ID",
+  botId: "BOT_ID",
 };
 
 export async function create(context: DeclarativeAgentBotContext): Promise<void> {
@@ -29,6 +30,7 @@ export async function create(context: DeclarativeAgentBotContext): Promise<void>
 
 async function wrapExecution(context: DeclarativeAgentBotContext): Promise<void> {
   try {
+    prepare(context);
     await updateLaunchJson(context);
     await updateManifest(context);
     await provisionBot(context);
@@ -39,7 +41,21 @@ async function wrapExecution(context: DeclarativeAgentBotContext): Promise<void>
   }
 }
 
+function prepare(context: DeclarativeAgentBotContext): void {
+  const state = loadStateFromEnv(new Map(Object.entries(defaultOutputNames)));
+  if (state.agentId) {
+    context.isProvisioned = true;
+  }
+  if (state.botId) {
+    context.teamsBotId = state.botId;
+  }
+}
+
 async function updateLaunchJson(context: DeclarativeAgentBotContext): Promise<void> {
+  if (context.isProvisioned) {
+    TOOLS.logProvider.info("Bot is already provisioned, skip updating launch.json");
+    return;
+  }
   const launchJsonPath = path.join(context.projectPath, launchJsonFile);
   if (await fs.pathExists(launchJsonPath)) {
     await context.backup(launchJsonFile);
@@ -80,6 +96,10 @@ async function updateLaunchJson(context: DeclarativeAgentBotContext): Promise<vo
 }
 
 async function updateManifest(context: DeclarativeAgentBotContext): Promise<void> {
+  if (context.isProvisioned) {
+    TOOLS.logProvider.info("Bot is already provisioned, skip updating manifest.");
+    return;
+  }
   const manifestFile = path.join(AppPackageFolderName, MetadataV3.teamsManifestFileName);
   const manifestPath = path.join(context.projectPath, manifestFile);
   if (await fs.pathExists(manifestPath)) {
@@ -100,6 +120,10 @@ async function updateManifest(context: DeclarativeAgentBotContext): Promise<void
 }
 
 async function provisionBot(context: DeclarativeAgentBotContext): Promise<void> {
+  if (context.isProvisioned) {
+    TOOLS.logProvider.info("Bot is already provisioned, skip provisioning.");
+    return;
+  }
   const agentManifest = await copilotGptManifestUtils.readCopilotGptManifestFile(
     context.agentManifestPath
   );
@@ -109,10 +133,8 @@ async function provisionBot(context: DeclarativeAgentBotContext): Promise<void> 
 
   const state = loadStateFromEnv(new Map(Object.entries(defaultOutputNames)));
   if (!state.m365AppId || !state.tenantId) {
-    throw new Error("M365 app id or tenant id is not found in .env file");
+    throw new Error("M365 app id or tenant id is not found in .env file.");
   }
-
-  context.agentId = getUuid();
 
   // construct payload for bot provisioning
   const payload: DeclarativeAgentBotDefinition = {
@@ -122,7 +144,7 @@ async function provisionBot(context: DeclarativeAgentBotContext): Promise<void> 
       teams_app_id: state.m365AppId,
     },
     PersistenceMode: 0,
-    EnableChannels: ["msteams"],
+    EnabledChannels: ["msteams"],
     IsMultiTenant: context.multiTenant,
   };
 
@@ -140,6 +162,11 @@ async function provisionBot(context: DeclarativeAgentBotContext): Promise<void> 
 }
 
 async function getBotId(context: DeclarativeAgentBotContext): Promise<void> {
+  if (context.isProvisioned && context.teamsBotId) {
+    TOOLS.logProvider.info("Bot is already provisioned, skip getting bot id.");
+    return;
+  }
+
   const tokenResult = await TOOLS.tokenProvider.m365TokenProvider.getAccessToken({
     scopes: CopilotStudioScopes,
   });
