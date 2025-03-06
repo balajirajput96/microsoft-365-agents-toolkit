@@ -224,6 +224,13 @@ export async function activate(context: vscode.ExtensionContext) {
     shouldEnableChatParticipantUIEntries
   );
 
+  const shouldHideGitHubCopilotPreviewTag =
+    releaseControlledFeatureSettings.shouldHideTeamsAgentPreviewTag;
+  featureFlagManager.setBooleanValue(
+    CoreFeatureFlags.HideGitHubCopilotPreviewTag,
+    shouldHideGitHubCopilotPreviewTag
+  );
+
   context.subscriptions.push(new ExtTelemetry.Reporter(context));
 
   configMgr.registerConfigChangeCallback();
@@ -265,6 +272,11 @@ export async function activate(context: vscode.ExtensionContext) {
     "setContext",
     "fx-extension.isChatParticipantUIEntriesEnabled",
     shouldEnableChatParticipantUIEntries
+  );
+  await vscode.commands.executeCommand(
+    "setContext",
+    "fx-extension.hideTeamsAgentPreviewTag",
+    shouldHideGitHubCopilotPreviewTag
   );
 
   await vscode.commands.executeCommand(
@@ -484,11 +496,23 @@ function registerActivateCommands(context: vscode.ExtensionContext) {
   );
   context.subscriptions.push(invokeTeamsAgent);
 
+  const invokeTeamsAgentWithPreviewTag = vscode.commands.registerCommand(
+    "fx-extension.invokeChatWithPreviewTag",
+    (...args) => Correlator.run(copilotChatHandlers.invokeTeamsAgent, args)
+  );
+  context.subscriptions.push(invokeTeamsAgentWithPreviewTag);
+
   const troubleshootSelectedText = vscode.commands.registerCommand(
     "fx-extension.teamsAgentTroubleshootSelectedText",
     (...args) => Correlator.run(copilotChatHandlers.troubleshootSelectedText, args)
   );
   context.subscriptions.push(troubleshootSelectedText);
+
+  const troubleshootSelectedTextWithPreviewTag = vscode.commands.registerCommand(
+    "fx-extension.teamsAgentTroubleshootSelectedTextWithPreviewTag",
+    (...args) => Correlator.run(copilotChatHandlers.troubleshootSelectedText, args)
+  );
+  context.subscriptions.push(troubleshootSelectedTextWithPreviewTag);
 
   const troubleshootError = vscode.commands.registerCommand(
     "fx-extension.teamsAgentTroubleshootError",
