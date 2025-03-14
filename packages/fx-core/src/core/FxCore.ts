@@ -20,8 +20,6 @@ import {
   CreateProjectResult,
   CryptoProvider,
   DefaultApiSpecFolderName,
-  Err,
-  File,
   Func,
   FxError,
   IGenerator,
@@ -126,6 +124,10 @@ import { createDriverContext } from "../component/driver/util/utils";
 import { SSO } from "../component/feature/sso";
 import { addExistingPlugin } from "../component/generator/declarativeAgent/helper";
 import {
+  ItemMetadata,
+  getODSPItemDetailById,
+} from "../component/generator/declarativeAgent/oneDriveSharePointHandler";
+import {
   convertSpecParserErrorToFxError,
   generateAdaptiveCardInPluginManifestForKiota,
   generateFromApiSpec,
@@ -195,10 +197,6 @@ import {
 } from "./middleware/utils/v3MigrationUtils";
 import { CoreTelemetryEvent, CoreTelemetryProperty } from "./telemetry";
 import { CoreHookContext, PreProvisionResForVS, VersionCheckRes } from "./types";
-import {
-  getODSPItemDetailById,
-  ItemMetadata,
-} from "../component/generator/declarativeAgent/oneDriveSharePointHandler";
 
 export class FxCore {
   constructor(tools: Tools) {
