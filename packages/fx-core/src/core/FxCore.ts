@@ -20,8 +20,6 @@ import {
   CreateProjectResult,
   CryptoProvider,
   DefaultApiSpecFolderName,
-  Err,
-  File,
   Func,
   FxError,
   IGenerator,
@@ -126,6 +124,10 @@ import { createDriverContext } from "../component/driver/util/utils";
 import { SSO } from "../component/feature/sso";
 import { addExistingPlugin } from "../component/generator/declarativeAgent/helper";
 import {
+  ItemMetadata,
+  getODSPItemDetailById,
+} from "../component/generator/declarativeAgent/oneDriveSharePointHandler";
+import {
   convertSpecParserErrorToFxError,
   generateAdaptiveCardInPluginManifestForKiota,
   generateFromApiSpec,
@@ -195,10 +197,6 @@ import {
 } from "./middleware/utils/v3MigrationUtils";
 import { CoreTelemetryEvent, CoreTelemetryProperty } from "./telemetry";
 import { CoreHookContext, PreProvisionResForVS, VersionCheckRes } from "./types";
-import {
-  getODSPItemDetailById,
-  ItemMetadata,
-} from "../component/generator/declarativeAgent/oneDriveSharePointHandler";
 
 export class FxCore {
   constructor(tools: Tools) {
@@ -1160,7 +1158,7 @@ export class FxCore {
     EnvLoaderMW(false),
     ConcurrentLockerMW,
   ])
-  async previewWithManifest(inputs: InputsWithProjectPath): Promise<Result<string, FxError>> {
+  async previewWithManifest(inputs: Inputs): Promise<Result<string, FxError>> {
     inputs.stage = Stage.previewWithManifest;
 
     const hub = inputs[QuestionNames.M365Host] as HubTypes;
@@ -1169,7 +1167,7 @@ export class FxCore {
 
     const manifestRes = await manifestUtils.getManifestV3(
       manifestFilePath,
-      generateDriverContext(context, inputs),
+      generateDriverContext(context, inputs as InputsWithProjectPath),
       false
     );
     if (manifestRes.isErr()) {
