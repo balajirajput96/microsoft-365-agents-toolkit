@@ -560,11 +560,10 @@ export async function generateFromApiSpec(
       [telemetryProperties.generateType]: projectType.toString(),
       [specParserGenerateResultAllSuccessTelemetryProperty]: generateResult.allSuccess.toString(),
       [specParserGenerateResultWarningsTelemetryProperty]: generateResult.warnings
-        .map((w) => w.type.toString() + ": " + w.content)
+        .map((w) => `${w.type.toString()}: ${w.content}`)
         .join(";"),
       [TelemetryProperty.Component]: sourceComponent,
     });
-
     if (generateResult.warnings && generateResult.warnings.length > 0) {
       generateResult.warnings.find((o) => {
         if (o.type === WarningType.OperationOnlyContainsOptionalParam) {
