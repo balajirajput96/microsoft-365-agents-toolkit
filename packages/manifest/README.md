@@ -4,30 +4,20 @@
 
 ---
 
-## 🚀 Summary
-
-A collection of TypeScript definitions and converters for Microsoft 365 App manifests, including:
-
-- **Strongly‑typed interfaces** for three manifest types with all versions:  
-  - Teams Manifest: 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 1.10, 1.11, 1.12, 1.13, 1.14, 1.15, 1.16, 1.17, 1.19, 1.20, devPreview
-  - Declarative Agent Manifest: v1.0, v1.2, v1.3
-  - API Plugin Manifest: v2.1, v2.2
-- **Conversion utilities** between JSON strings and typed manifest objects.  
-- **Utility tools** for:  
-  - Validating manifests against manifest schemas  
-  - Reading/writing manifest files from disk with type checking  
-
----
-
 ## ✨ Features
 
-- **Type‑safe definitions** of all versions generated from Microsoft’s official [JSON schemas](https://developer.microsoft.com/json-schemas/), guaranteeing compile‑time type correctness.
+A collection of TypeScript definitions and converters for Microsoft 365 App manifests.
 
-- **Bi‑directional conversion functions** (`jsonToManifest` and `manifestToJson`) for all types and all versions of manifest with runtime type validation.
+- **Strongly‑typed interfaces** for three manifest types with all versions generated from Microsoft’s official [JSON schemas](https://developer.microsoft.com/json-schemas/), guaranteeing compile‑time type correctness:  
+  - Teams Manifest: 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 1.10, 1.11, 1.12, 1.13, 1.14, 1.15, 1.16, 1.17, 1.19, 1.20, 1.21, devPreview  
+  - Declarative Agent Manifest: v1.0, v1.2, v1.3, v1.4  
+  - API Plugin Manifest: v2.1, v2.2
 
-- **Schema validation utilities** to generate validation errors.
+- **Bi‑directional conversions** from JSON to manifest or from manifest to JSON(`jsonToManifest` and `manifestToJson`) with runtime type validation.
 
-- **File I/O helpers** to conveniently load and dump manifest files in JSON format.
+- **Schema validation utilities** to validating manifests against schemas  
+
+- **File I/O helpers** to conveniently load manifest from file or dump manifest to file in JSON format.
 
 - **Modular versioning**: manifests organized per version file, avoiding type collisions.
 
@@ -55,7 +45,7 @@ You can specify a concrete version type:
 
 ### Manifest to/from JSON converters
 
-Convert JSON string to manifest type and check the version at run time:
+Convert JSON string to Teams manifest type and check the version at run time:
 
 ```typescript
 const json = "{ \"manifestVersion\": \"1.20\", \"id\": \"app-id\", ...}";
@@ -67,7 +57,7 @@ if (manifest.manifestVersion === "1.20") {
 }
 ```
 
-Convert JSON string to manifest type by specifying the version at compile time:
+Convert JSON string to Teams manifest type by specifying the version at compile time:
 
 ```typescript
 const json = "{ \"manifestVersion\": \"1.20\", \"id\": \"app-id\", ...}";
@@ -75,10 +65,19 @@ const manifest = TeamsManifestConverter.jsonToManifest(json) as TeamsManifestV1D
 // You can now access properties specific to TeamsManifestV1D20
 ```
 
+Convert JSON string to declarative agent manifest type and api plugin manifest type:
+
+```typescript
+const daManifest = DeclarativeAgentManifestConverter.jsonToManifest(daManifestJSON) as DeclarativeAgentManifest;
+const pluginManifest = ApiPluginManifestConverter.jsonToManifest(pluginManifestJSON) as APIPluginManifest;
+```
+
 Convert manifest object to JSON string:
 
 ```typescript
 const jsonString = TeamsManifestConverter.manifestToJson(manifest);
+const daJsonString = DeclarativeAgentManifestConverter.manifestToJson(daManifest);
+const pluginJsonString = ApiPluginManifestConverter.manifestToJson(pluginManifest);
 ```
 
 Note that the converts to/from JSON will throw runtime type check failures.
@@ -105,7 +104,6 @@ const daManifestPath = "path/to/your/da_manifest.json";
 const daManifest1 = await AppManifestUtils.readDeclarativeAgentManifest(daManifestPath);
 // read declarative agent manifest and validate against schema
 const [daManifest2, failedValidations2] = await AppManifestUtils.readAndValidateDeclarativeAgentManifest(daManifestPath);
-
 
 const pluginManifestPath = "path/to/your/plugin_manifest.json"; 
 // read API plugin manifest with type check
