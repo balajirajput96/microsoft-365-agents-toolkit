@@ -77,7 +77,7 @@ export class CDPClient {
     );
 
     // try to filter on sub target iframe at the same time for compatibility issue,
-    // for some accounts, connect to main iframe does not works, but for some accounts, connect to sub target iframe works
+    // for some accounts, connect to main iframe does not work, connect to sub target iframe works
     logger.debug("CDPClient.subscribeToWebSocketEvents() - start listening to sub target iframe");
     this.enableRetry = true;
     void this.connectToTargetIframeWithRetries(client);
