@@ -487,10 +487,7 @@ describe("Wrapped Axios Client Test", () => {
       "https://titles.prod.mos.microsoft.com/abc",
       "GET"
     );
-    chai.assert.equal(
-      apiName,
-      `mos_unclassified_${"https://titles.prod.mos.microsoft.com/abc".replace(/\//g, "_")}`
-    );
+    chai.assert.equal(apiName, "mos_unclassified__abc");
   });
 
   it("Convert API Definition for MOS API", async () => {
