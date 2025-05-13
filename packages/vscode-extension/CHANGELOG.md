@@ -5,18 +5,44 @@
 ## 6.0.0 - May 19, 2025
 This major version upgrade is a milestone as Teams Toolkit rename to Microsoft 365 Agents Toolkit with new product icon and a set of awesome new features to provide better development support for agents building!
 
-### Product Update: Teams Toolkit Renamed to Microsoft 365 Agents Toolkit
+### Introducing Microsoft 365 Agents Toolkit
 
-We are excited to announce that our product, evovled from Teams Toolkit, is being renamed to `Microsoft 365 Agents Toolkit`. This change reflects our expanded focus and commitment to support a broader range of platforms and project types within the Microsoft 365 ecosystem.
+We’re excited to announce that our product — formerly known as `Teams Toolkit` — is now called the `Microsoft 365 Agents Toolkit`. This new name reflects our broader vision and ongoing commitment to support a wide range of development scenarios across the Microsoft 365 ecosystem.
 
-As we continue to enhance our product, we are shifting our focus from solely supporting Teams development to empowering developers to create Microsoft 365 Copilot agents and other applications across the Microsoft 365 platform. These platforms include Microsoft 365 Copilot, Microsoft Teams, Office family and Outlook. This expansion in scope allows us to better serve our users by providing comprehensive tools, templates and resources for developing a wide variety of Microsoft 365 solutions.
+As we evolve, we’re expanding beyond Microsoft Teams development to empower developers to build Microsoft 365 Copilot agents and applications across platforms like Microsoft Teams, Microsoft 365 Copilot, Outlook, and the Office family. This broader scope enables us to deliver a more versatile and comprehensive set of tools, templates, and resources to help you create powerful, integrated solutions.
 
 ![ATK animation](https://github.com/user-attachments/assets/96e34da7-06a5-4632-9243-db823e9edb51)
 
-The new name, Microsoft 365 Agents Toolkit, better represents the diverse functionalities and capabilities of our product. We believe this change will help our users more easily identify the full range of development opportunities available within the Microsoft 365 environment.
+The new name — Microsoft 365 Agents Toolkit — better represents the full range of capabilities we now support. We believe this change will help you more easily discover and unlock the potential of building across the Microsoft 365 platform.
 
 ### New Features
 
+- **Use OneDrive and SharePoint as Knowledge Sources in Declarative Agents**
+
+[You can now enhance your declarative agents by connecting them to knowledge sources from OneDrive and SharePoint](https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/knowledge-sources). The toolkit allows agents to retrieve grounded, contextually relevant information from files, folders, and sites a user has access to. To get started, open your declarative agent project and select "Add Capability" → "OneDrive and SharePoint."
+
+<img width="882" alt="SP-capability-da" src="https://github.com/user-attachments/assets/9bed27ab-fe7f-4c7e-acb6-989b01d6137b" />
+
+- **Leverage Copilot Connectors in Declarative Agents**
+
+Expand your agent’s knowledge base by integrating Copilot connectors. These connectors let you ingest data from third-party APIs into Microsoft Graph, which can then be used within declarative agents. You can add a Copilot connector when creating a declarative agent or use the "Copilot Connectors" template to build and extend your solution to declarative agents later.
+
+<img width="1088" alt="copilot-connector-in-DA" src="https://github.com/user-attachments/assets/5d9a4e48-a9ba-45a4-a7a3-1797cf0fc3f7" />
+
+- **Build Custom Engine Agent using Microsoft 365 Agents SDK**
+
+We’ve introduced support for building Custom Engine Agents using the [Microsoft 365 Agents SDK](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/agents-sdk-overview?tabs=csharp). This SDK is a flexible framework that allows developers to build and deploy AI-powered agents across multiple channels — such as Microsoft 365 Copilot, Teams, and custom apps — using the AI services of their choice. It simplifies the creation of agentic patterns with built-in support for state, storage, and channel-specific behaviors.
+
+<img width="1089" alt="CEA-Agents-SDK" src="https://github.com/user-attachments/assets/df90331d-fd85-46bc-9d9a-4a1649d6e09c" />
+
+- **Microsoft 365 Agents Playground**
+We’re excited to introduce the [Microsoft 365 Agents Playground](https://www.npmjs.com/package/@microsoft/teams-app-test-tool), a component evolved from Teams App Test Tool, which provides a web-based chat environment that simulates the behavior, look, and feel of various channels — such as Copilot and Microsoft Teams — allowing developers to test, debug, and iterate on their agent or app design without the need for complex setup.
+
+<img width="711" alt="Agents-playground" src="https://github.com/user-attachments/assets/daf9307d-84d0-42a3-bda6-d63e801acb14" />
+
+- **[Preview Feature] Use TypeSpec to build Declarative Agent**
+
+To enhance the developer experience for pro-code agent builders, we see strong value in introducing the option that leverages TypeSpec for Copilot. This approach would provide a type-safe development experience, reduce dependency on JSON files, and offer greater flexibility in generating artifacts for your agents.
 
 ### Enhancement
 
