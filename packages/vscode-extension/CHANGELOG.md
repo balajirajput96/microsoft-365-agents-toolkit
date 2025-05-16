@@ -2,6 +2,70 @@
 
 > Note: This changelog only includes the changes for the stable versions of Teams Toolkit. For the changelog of pre-released versions, please refer to the [Teams Toolkit Pre-release Changelog](https://github.com/OfficeDev/TeamsFx/blob/dev/packages/vscode-extension/PRERELEASE.md).
 
+## 6.0.0 - May 19, 2025
+This major version upgrade is a milestone as Teams Toolkit evolves to Microsoft 365 Agents Toolkit with a set of awesome new features to provide better development experience for agents building and a brand new icon!
+
+### Introducing Microsoft 365 Agents Toolkit
+
+We’re excited to announce that our product — `Microsoft 365 Agents Toolkit`(evolved from Teams Toolkit). This update reflects our broader vision and ongoing commitment to support a wide range of development scenarios across the Microsoft 365 ecosystem.
+
+As we evolve, we’re expanding beyond Microsoft Teams development to empower developers to build agents for Microsoft 365 Copilot and applications across platforms like Microsoft Teams, Microsoft 365 Copilot, Microsoft 365 apps. This broader scope enables us to deliver a more versatile and comprehensive set of tools, templates, and resources to help you create powerful, integrated solutions.
+
+![ATK animation](https://github.com/user-attachments/assets/96e34da7-06a5-4632-9243-db823e9edb51)
+
+The name — Microsoft 365 Agents Toolkit - better represents the full range of capabilities we now support. We believe this change will help you more easily discover and unlock the potential of building across the Microsoft 365 platforms.
+
+### New Features
+
+- **Use OneDrive and SharePoint as Knowledge Sources in Declarative Agents**
+
+[You can now enhance your declarative agents by connecting them to knowledge sources from OneDrive and SharePoint](https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/knowledge-sources). The toolkit allows agents to retrieve grounded, contextually relevant information from files, folders, and sites a user has access to. To get started, open your declarative agent project and select "Add Capability" → "OneDrive and SharePoint."
+
+<img width="882" alt="SP-capability-da" src="https://github.com/user-attachments/assets/9bed27ab-fe7f-4c7e-acb6-989b01d6137b" />
+
+- **Leverage Copilot Connectors in Declarative Agents**
+
+Expand your agent’s knowledge base by integrating Copilot connectors. These connectors let you ingest data from third-party data sources into Microsoft Graph, which can then be used within Microsoft 365 Copilot or through a declarative agent. You can add a Copilot connector when creating a declarative agent or use the "Copilot Connectors" template to build and extend your solution to declarative agents later.
+
+<img width="1088" alt="copilot-connector-in-DA" src="https://github.com/user-attachments/assets/5d9a4e48-a9ba-45a4-a7a3-1797cf0fc3f7" />
+
+- **Kiota Integration for Declarative Agents**
+
+We’ve added [Kiota](https://aka.ms/kiota/docs) integration to streamline working with OpenAPI specifications in declarative agent projects. Developers often need to handle OpenAPI documents when defining actions, this update enables developers to search Open API description documentations and easily regenerate actions. The toolkit now uses Kiota to read, process, and generate code from OpenAPI files—making it easier and more consistent to define and consume external APIs within your declarative agents.
+
+<img width="865" alt="image" src="https://github.com/user-attachments/assets/906dc3a3-ec83-4cb0-a73d-d1a207876a19" />
+
+- **Build Custom Engine Agent using Microsoft 365 Agents SDK**
+
+We’ve introduced support for building Custom Engine Agents using the [Microsoft 365 Agents SDK](https://learn.microsoft.com/en-us/microsoft-365/agents-sdk/agents-sdk-overview?tabs=csharp). This SDK is a flexible framework that allows developers to build and deploy AI-powered agents across multiple channels — such as Microsoft 365 Copilot, Teams, and custom apps — using the AI services of their choice. It simplifies the creation of agentic patterns with built-in support for state, storage, and channel-specific behaviors.
+
+<img width="1089" alt="CEA-Agents-SDK" src="https://github.com/user-attachments/assets/df90331d-fd85-46bc-9d9a-4a1649d6e09c" />
+
+- **Microsoft 365 Agents Playground**
+We’re excited to introduce the [Microsoft 365 Agents Playground](https://www.npmjs.com/package/@microsoft/teams-app-test-tool), a component evolved from Teams App Test Tool, which provides a web-based chat environment that simulates the behavior, look, and feel of various channels — such as Copilot and Microsoft Teams — allowing developers to test, debug, and iterate on their agent or app design without the need for complex setup.
+
+<img width="711" alt="Agents-playground" src="https://github.com/user-attachments/assets/daf9307d-84d0-42a3-bda6-d63e801acb14" />
+
+- **[Preview Feature] Use TypeSpec to build Declarative Agent**
+
+To enhance the developer experience for pro-code agent builders, we see strong value in introducing the option that leverages TypeSpec for Microsoft 365 Copilot. This approach provides a type-safe development experience, reduces dependency on JSON files, improves the developer's inner-loop and offer greater flexibility in generating artifacts for your agents and actions.
+
+### Enhancement
+
+- **Smooth installation for Microsoft 365 Agents Playground**: The toolkit will automatically install NodeJS to avoid unnecessary errors in Microsoft 365 Agents Playground installation, for users who don't have NodeJS installed on their machine.
+
+- **Support SharePoint Framework v1.21**: For Teams tab app using SharePoint Framework, we upgrade to support v1.21.
+
+### Bug Fix
+
+- Enhanced compatibility with previous version of YAML files using old names to ensure smoother migration or continued use of existing projects.
+  
+- Upgraded dependencies like `axios` to address security vulnerabilities.
+
+- Clear error messages for troubleshooting: Enhanced error messages by explicitly showing YAML file names where missing or unresolved environment variables or no valid app catelog. Show clear error messages to make it easier for users to identify and resolve configuration issues.
+
+- Enhanced logging for CDP client and telemetry for agents development activites.
+
 ## 5.14.1 - Mar 28, 2025
 This patch version update of Teams Toolkit includes several incremental enhancements and bug fixes:
 - Updated manifest version for Declarative Agent to v1.3
