@@ -35,9 +35,7 @@
             "botId": "${{BOT_ID}}",
             "scopes": [
                 "copilot",
-                "personal",
-                "team",
-                "groupChat"
+                "personal"
             ],
             "supportsFiles": false,
             "isNotificationOnly": false,
