@@ -13,6 +13,7 @@ async function downloadAndExtract() {
   const zipPath = path.join(tempDir, "live.zip");
 
   console.log(`Downloading zip to ${zipPath}`);
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Failed to download: ${res.statusText}`);
 
