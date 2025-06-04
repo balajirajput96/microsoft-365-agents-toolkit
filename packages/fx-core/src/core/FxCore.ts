@@ -2074,7 +2074,7 @@ export class FxCore {
         AppStudioResultFactory.UserError(
           AppStudioError.TeamsAppRequiredPropertyMissingError.name,
           AppStudioError.TeamsAppRequiredPropertyMissingError.message(
-            "declarativeCopilots",
+            "declarativeAgents",
             teamsManifestPath
           )
         )
