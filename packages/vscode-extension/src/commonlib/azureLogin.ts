@@ -27,7 +27,7 @@ import { azureCacheName, loggedIn, loggedOut, loggingIn, signingIn } from "./com
 import { login, LoginStatus } from "./common/login";
 import * as util from "util";
 import { ExtTelemetry } from "../telemetry/extTelemetry";
-import VsCodeLogInstance from "./log";
+import VsCodeLogInstance, { VsCodeLogProvider } from "./log";
 import {
   TelemetryEvent,
   TelemetryProperty,
@@ -511,6 +511,9 @@ export class AzureAccountManager extends login implements AzureAccountProvider {
   async selectSubscription(): Promise<void> {
     const subscriptionList = await this.listSubscriptions();
     if (!subscriptionList || subscriptionList.length == 0) {
+      VsCodeLogProvider.getInstance().error(
+        "No subscription found with this tenant. Hover over your Azure account and click 'Switch' to change tenants."
+      );
       throw new UserError(
         getDefaultString("teamstoolkit.codeFlowLogin.loginComponent"),
         getDefaultString("teamstoolkit.azureLogin.noSubscriptionFound"),
