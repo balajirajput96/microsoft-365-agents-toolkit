@@ -269,6 +269,9 @@ jobs:
       AZURE_COSMOS_CONTAINER : "${{ secrets.AZURE_COSMOS_CONTAINER }}"
       AZURE_COSMOS_KEY : "${{ secrets.AZURE_COSMOS_KEY }}"
       
+      AZURE_ACCOUNT_NAME: ${{ secrets.TEST_USER_NAME }}
+      AZURE_ACCOUNT_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      
       
       TEAMSFX_DEV_TUNNEL_TEST: true
       TEAMSFX_TELEMETRY_TEST: true
@@ -431,6 +434,20 @@ jobs:
             exit 1
           }
         shell: pwsh
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python environment
+        run: |
+          pip install python-dotenv aiohttp azure-search azure-search-documents teams-ai~=1.6.0
+
+      - name: Install python extension
+        working-directory: packages/tests
+        run: |
+          code --install-extension ms-python.python
 
       # Sign in
       - name: Set m365 account (win)

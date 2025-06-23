@@ -373,7 +373,7 @@ export class TestToolChecker implements DepsChecker {
         }
         this.telemetryProperties[TelemetryProperties.VersioningTestToolVersionError] =
           (this.telemetryProperties[TelemetryProperties.VersioningTestToolVersionError] ?? "") +
-          `[${version}] ${checkVersionRes.error.message}`;
+          `[${version}] ${String(checkVersionRes.error.message)}`;
       }
     } catch {
       // ignore errors if portable dir doesn't exist
@@ -545,9 +545,19 @@ export class TestToolChecker implements DepsChecker {
   }
   private getPortableVersionsDir(releaseType: string): string {
     if (releaseType === TestToolReleaseType.Npm) {
-      return path.join(os.homedir(), `.${ConfigFolderName}`, "bin", this.portableDirNameNpm);
+      return path.join(
+        os.homedir(),
+        `.${String(ConfigFolderName)}`,
+        "bin",
+        this.portableDirNameNpm
+      );
     } else {
-      return path.join(os.homedir(), `.${ConfigFolderName}`, "bin", this.portableDirNameBinary);
+      return path.join(
+        os.homedir(),
+        `.${String(ConfigFolderName)}`,
+        "bin",
+        this.portableDirNameBinary
+      );
     }
   }
   private getPortableInstallPath(releaseType: TestToolReleaseType, version: string): string {
@@ -622,16 +632,16 @@ export class GitHubHelpers {
     const result: GitHubRelease[] = [];
     for (const release of releases) {
       const parts = release.tag_name.split("@");
-      const assets = release.assets.filter((asset) =>
+      const platformAssets = release.assets.filter((asset) =>
         asset.name.includes(`${this.artifactNamePrefix}-${os.platform()}-${os.arch()}`)
       );
       if (parts.length === 2) {
         const pkgName = parts[0];
         const version = parts[1];
-        if (pkgName == this.releasePackageName && assets.length > 0) {
+        if (pkgName == this.releasePackageName && platformAssets.length > 0) {
           result.push({
             version,
-            url: release.assets[0].url,
+            url: platformAssets[0].url,
           });
         }
       }
