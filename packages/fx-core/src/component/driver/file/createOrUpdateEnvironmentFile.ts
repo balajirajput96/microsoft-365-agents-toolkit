@@ -13,6 +13,7 @@ import { InvalidActionInputError, assembleError } from "../../../error/common";
 import {
   azureOpenAIAssistantIdQuestion,
   azureOpenAIDeploymentNameQuestion,
+  azureOpenAIEmbeddingDeploymentNameQuestion,
   azureOpenAIEndpointQuestion,
   azureOpenAIKeyQuestion,
   openAIAssistantIdQuestion,
@@ -314,8 +315,8 @@ export class CreateOrUpdateEnvironmentFileDriver implements StepDriver {
       );
       if (matches != null && matches.length > 1) {
         const result = await ctx.ui!.inputText({
-          name: azureOpenAIDeploymentNameQuestion().name,
-          title: azureOpenAIDeploymentNameQuestion().title as string,
+          name: azureOpenAIEmbeddingDeploymentNameQuestion().name,
+          title: azureOpenAIEmbeddingDeploymentNameQuestion().title as string,
           validation: (input: string): string | undefined => {
             if (input.length < 1) {
               return getLocalizedString(
