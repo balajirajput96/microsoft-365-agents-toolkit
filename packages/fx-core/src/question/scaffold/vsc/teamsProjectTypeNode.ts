@@ -9,6 +9,7 @@ import {
   Platform,
   StringArrayValidation,
   StringValidation,
+  UserError,
 } from "@microsoft/teamsfx-api";
 import { featureFlagManager, FeatureFlags } from "../../../common/featureFlags";
 import { getLocalizedString } from "../../../common/localizeUtils";
@@ -37,6 +38,9 @@ import {
   TeamsAgentCapabilityOptions,
 } from "./CapabilityOptions";
 import { ProjectTypeOptions } from "./ProjectTypeOptions";
+import { TemplateNames } from "../../../component/generator/templates/templateNames";
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 
 export function teamsProjectNode(platform: Platform): IQTreeNode {
   return {
@@ -482,6 +486,90 @@ export function m365SearchMeSubNode(): IQTreeNode {
         },
       },
       apiSpecNode({ equals: MeArchitectureOptions.openApiSpec().id }),
+    ],
+  };
+}
+
+export function MCPForDAServerUrlNode(): IQTreeNode {
+  return {
+    condition: { equals: ActionStartOptions.mcp().id },
+    data: {
+      name: QuestionNames.MCPForDAServerUrl,
+      title: getLocalizedString("core.createProjectQuestion.mcpForDa.ServerUrl.title"),
+      type: "text",
+      placeholder: getLocalizedString("core.createProjectQuestion.mcpForDa.ServerUrl.placeholder"),
+    },
+    children: [
+      {
+        data: {
+          type: "singleSelect",
+          name: QuestionNames.MCPForDATool,
+          title: getLocalizedString("core.createProjectQuestion.mcpForDa.Tool.title"),
+          staticOptions: [
+            {
+              id: "pre-fetch-tools",
+              label: getLocalizedString("core.createProjectQuestion.mcpForDa.Tool.preFetch.label"),
+              detail: getLocalizedString(
+                "core.createProjectQuestion.mcpForDa.Tool.preFetch.detail"
+              ),
+              data: TemplateNames.DeclarativeAgentWithActionFromMCP,
+            },
+            {
+              id: "dynamic-discovery",
+              label: getLocalizedString(
+                "core.createProjectQuestion.mcpForDa.Tool.dynamicDiscovery.label"
+              ),
+              detail: getLocalizedString(
+                "core.createProjectQuestion.mcpForDa.Tool.dynamicDiscovery.detail"
+              ),
+              data: TemplateNames.DeclarativeAgentWithActionFromMCP,
+            },
+          ],
+          onDidSelection: setTemplateName,
+        },
+        children: [
+          {
+            condition: { equals: "pre-fetch-tools" },
+            data: {
+              type: "multiSelect",
+              name: QuestionNames.MCPForDAPreFetchTools,
+              title: getLocalizedString("core.createProjectQuestion.mcpForDa.PreFetchTools.title"),
+              staticOptions: [],
+              dynamicOptions: async (inputs: Inputs): Promise<OptionItem[]> => {
+                const serverUrl = inputs[QuestionNames.MCPForDAServerUrl];
+                if (!serverUrl) {
+                  return [];
+                }
+                const transport = new StreamableHTTPClientTransport(new URL(serverUrl));
+                const client = new Client({
+                  name: "M365 Agent Toolkit",
+                  version: "1.0.0",
+                });
+                try {
+                  await client.connect(transport);
+                  const mcpTools = await client.listTools();
+                  inputs[QuestionNames.MCPForDAPreFetchToolsDetail] = mcpTools.tools;
+                  return mcpTools.tools.map((tool: any) => {
+                    return {
+                      id: tool.name,
+                      label: tool.name,
+                      detail: tool.description || "",
+                    };
+                  });
+                } catch (error: any) {
+                  throw new UserError(
+                    "MCPForDAServerUrlError",
+                    "Failed to connect to MCP server",
+                    `Please check the MCP server URL: ${serverUrl as string}. Error: ${
+                      error.message as string
+                    }`
+                  );
+                }
+              },
+            },
+          },
+        ],
+      },
     ],
   };
 }
