@@ -151,6 +151,7 @@ jobs:
       TEAMSFX_AAD_DEPLOY_ONLY: "true"
       SIDELOADING_SERVICE_ENDPOINT: ${{ secrets.SIDELOADING_SERVICE_ENDPOINT }}
       SIDELOADING_SERVICE_SCOPE: ${{ secrets.SIDELOADING_SERVICE_SCOPE }}
+      TEAMSFX_TEMPLATE_PRERELEASE: rc
     needs: setup
     runs-on: ubuntu-latest
     environment: engineering
