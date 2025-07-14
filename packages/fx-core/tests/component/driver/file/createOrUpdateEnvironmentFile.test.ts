@@ -504,6 +504,27 @@ describe("CreateOrUpdateEnvironmentFileDriver", () => {
       );
     });
 
+    it("should prompt for GENERAL_ENV_VAR and update envOutput", async () => {
+      const args = {
+        envs: {
+          GENERAL_ENV_VAR: "${{ GENERAL_ENV_VAR }}",
+        },
+      };
+      sinon
+        .stub(mockedDriverContext.ui!, "inputText")
+        .resolves(ok({ result: "fakeGeneralEnvVarValue" }));
+
+      const result = await driver.askForOpenAIEnvironmentVariables(
+        mockedDriverContext,
+        args,
+        envOutput
+      );
+
+      chai.assert(result.isOk());
+      chai.assert.equal(envOutput.get("GENERAL_ENV_VAR"), "fakeGeneralEnvVarValue");
+      chai.assert.equal(args.envs["GENERAL_ENV_VAR"], "fakeGeneralEnvVarValue");
+    });
+
     it("should return error if AZURE_OPENAI_API_KEY inputText fails", async () => {
       const args = {
         envs: {
@@ -635,6 +656,23 @@ describe("CreateOrUpdateEnvironmentFileDriver", () => {
       const args = {
         envs: {
           AZURE_OPENAI_EMBEDDING_DEPLOYMENT: "${{ AZURE_OPENAI_EMBEDDING_DEPLOYMENT }}",
+        },
+      };
+      sinon.stub(mockedDriverContext.ui!, "inputText").resolves(err(new UserCancelError()));
+
+      const result = await driver.askForOpenAIEnvironmentVariables(
+        mockedDriverContext,
+        args,
+        envOutput
+      );
+
+      chai.assert(result.isErr());
+    });
+
+    it("should return error if GENERAL_ENV_VAR inputText fails", async () => {
+      const args = {
+        envs: {
+          GENERAL_ENV_VAR: "${{ GENERAL_ENV_VAR }}",
         },
       };
       sinon.stub(mockedDriverContext.ui!, "inputText").resolves(err(new UserCancelError()));
@@ -839,6 +877,30 @@ describe("CreateOrUpdateEnvironmentFileDriver", () => {
           getLocalizedString(
             "driver.file.createOrUpdateEnvironmentFile.OpenAIEmbeddingDeploymentName.validation"
           )
+        );
+        return ok({ result: "" });
+      });
+
+      const result = await driver.askForOpenAIEnvironmentVariables(
+        mockedDriverContext,
+        args,
+        envOutput
+      );
+
+      chai.assert(result.isOk());
+    });
+
+    it("should validate GENERAL_ENV_VAR input and return error if input is empty", async () => {
+      const args = {
+        envs: {
+          GENERAL_ENV_VAR: "${{ GENERAL_ENV_VAR }}",
+        },
+      };
+      sinon.stub(mockedDriverContext.ui!, "inputText").callsFake(async (options) => {
+        const validationResult = (options as any).validation!(""); // Simulate empty input
+        chai.assert.equal(
+          validationResult,
+          getLocalizedString("driver.file.createOrUpdateEnvironmentFile.genericEnvVar.validation")
         );
         return ok({ result: "" });
       });
