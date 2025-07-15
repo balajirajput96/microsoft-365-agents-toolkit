@@ -612,6 +612,7 @@ export class ActionStartOptions {
       id: "mcp",
       label: getLocalizedString("core.createProjectQuestion.mcpForDa.label"),
       detail: getLocalizedString("core.createProjectQuestion.mcpForDa.detail"),
+      data: TemplateNames.DeclarativeAgentWithActionFromMCP,
     };
   }
 }
