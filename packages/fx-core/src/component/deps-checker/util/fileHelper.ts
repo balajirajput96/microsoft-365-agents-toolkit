@@ -14,6 +14,9 @@ export async function unlinkSymlink(linkFilePath: string): Promise<void> {
     const stat = await fs.lstat(linkFilePath);
     if (stat.isSymbolicLink()) {
       await fs.unlink(linkFilePath);
+    } else {
+      // For regular file or directory, remove it
+      await fs.remove(linkFilePath);
     }
   } catch (error: unknown) {
     const statError = error as { code?: string };
