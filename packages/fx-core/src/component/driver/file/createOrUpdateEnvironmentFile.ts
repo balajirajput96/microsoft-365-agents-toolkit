@@ -162,29 +162,27 @@ export class CreateOrUpdateEnvironmentFileDriver implements StepDriver {
     envKey: string,
     envValue: string
   ): Promise<Result<Void, FxError>> {
-    if (!envValue) {
-      return ok(Void);
-    }
+    if (envValue) {
+      const placeHolderReg = /\${{\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*}}/;
+      const matches = placeHolderReg.exec(envValue);
+      if (matches != null && matches.length > 1) {
+        const envVarName = matches[1];
+        const config =
+          envVarConfigs.find((c) => c.envKey === envKey) || getGenericEnvVarConfig(envKey);
 
-    const placeHolderReg = /\${{\s*([a-zA-Z_][a-zA-Z0-9_]*)\s*}}/;
-    const matches = placeHolderReg.exec(envValue);
-    if (matches != null && matches.length > 1) {
-      const envVarName = matches[1];
-      const config =
-        envVarConfigs.find((c) => c.envKey === envKey) || getGenericEnvVarConfig(envKey);
+        const result = await ctx.ui?.inputText({
+          name: config.question.name,
+          title: config.question.title as string,
+          password: config.isPassword || config.question.password,
+          validation: config.validation,
+        });
 
-      const result = await ctx.ui?.inputText({
-        name: config.question.name,
-        title: config.question.title as string,
-        password: config.isPassword || config.question.password,
-        validation: config.validation,
-      });
-
-      if (result?.isErr()) {
-        return result;
-      } else if (result?.isOk() && result.value.result) {
-        envOutput.set(envVarName, result.value.result);
-        args.envs[envKey] = result.value.result;
+        if (result?.isErr()) {
+          return result;
+        } else if (result?.isOk() && result.value.result) {
+          envOutput.set(envVarName, result.value.result);
+          args.envs[envKey] = result.value.result;
+        }
       }
     }
     return ok(Void);
