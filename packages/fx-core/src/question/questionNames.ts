@@ -144,7 +144,9 @@ export enum QuestionNames {
 
   DAMetaOSCapability = "da-meta-os-capability",
   MCPForDAServerUrl = "mcp-da-server-url",
+  MCPForDAServerName = "mcp-da-server-name",
   MCPForDATool = "mcp-da-tool",
+  MCPForDAAvailableTools = "mcp-da-available-tools",
   MCPForDAPreFetchTools = "mcp-da-pre-fetch-tools",
-  MCPForDAPreFetchToolsDetail = "mcp-da-pre-fetch-tools-detail",
+  MCPForDAAuth = "mcp-da-auth",
 }
