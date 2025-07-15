@@ -375,6 +375,7 @@ export async function generateForMCPForDA(
   }
 
   const mcpServerUrl = inputs[QuestionNames.MCPForDAServerUrl];
+  const serverName = inputs[QuestionNames.MCPForDAServerName];
   const mcpTool = inputs[QuestionNames.MCPForDATool];
 
   // 2. Read ai-plugin.json
@@ -394,8 +395,9 @@ export async function generateForMCPForDA(
     ];
   } else {
     // For pre-fetch tools, add the tool info to ai-plugin.json
-    const mcpToolsDetail = inputs[QuestionNames.MCPForDAPreFetchToolsDetail];
+    const mcpToolsDetail = inputs[QuestionNames.MCPForDAAvailableTools];
     const mcpToolsSelected = inputs[QuestionNames.MCPForDAPreFetchTools];
+    const mcpAuth = inputs[QuestionNames.MCPForDAAuth];
     if (!mcpToolsDetail || !mcpToolsSelected) {
       const error = new UserError(
         "MCPForDAPreFetchToolsNotFound",
@@ -406,6 +408,19 @@ export async function generateForMCPForDA(
       return err(error);
     }
     aiPluginContent.functions = mcpToolsDetail
+      .filter((tool: any) => tool.name.includes(serverName))
+      .map((tool: any) => {
+        const index = tool.name.indexOf(serverName);
+        const newName = (tool.name as string).substring(
+          (index as number) + (serverName.length as number) + 1
+        );
+        return {
+          name: newName,
+          description: tool.description,
+          inputSchema: tool.inputSchema,
+          tags: tool.tags,
+        };
+      })
       .filter((tool: any) => mcpToolsSelected.includes(tool.name))
       .map((tool: any) => {
         return {
@@ -428,6 +443,12 @@ export async function generateForMCPForDA(
         run_for_functions: aiPluginContent.functions.map((func: any) => func.name),
       },
     ];
+    if (mcpAuth === "OAuthPluginVault") {
+      aiPluginContent.runtimes[0].auth = {
+        type: "OAuthPluginVault",
+        reference_id: "${{MCP_DA_AUTH_ID}}",
+      };
+    }
   }
 
   // 3. Write ai-plugin.json

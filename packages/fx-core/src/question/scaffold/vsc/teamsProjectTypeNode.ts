@@ -37,8 +37,8 @@ import {
 import { ProjectTypeOptions } from "./ProjectTypeOptions";
 import { featureFlagManager, FeatureFlags } from "../../../common/featureFlags";
 import { TemplateNames } from "../../../component/generator/templates/templateNames";
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
+import * as vscode from "vscode";
+import axios from "axios";
 
 export function teamsAppProjectNode(platform: Platform): IQTreeNode {
   return {
@@ -326,8 +326,37 @@ export function MCPForDAServerUrlNode(): IQTreeNode {
       title: getLocalizedString("core.createProjectQuestion.mcpForDa.ServerUrl.title"),
       type: "text",
       placeholder: getLocalizedString("core.createProjectQuestion.mcpForDa.ServerUrl.placeholder"),
+      additionalValidationOnAccept: {
+        validFunc: async (input: string, inputs?: Inputs): Promise<string | undefined> => {
+          if (!inputs) {
+            throw new Error("inputs is undefined"); // should never happen
+          }
+
+          const serverUrl = input;
+          let auth: "OAuthPluginVault" | "NoneAuth" = "NoneAuth";
+          try {
+            const response = await axios.get(serverUrl);
+          } catch (error) {
+            if (error.status == 401) {
+              auth = "OAuthPluginVault";
+            }
+          }
+          inputs[QuestionNames.MCPForDAAuth] = auth;
+          return;
+        },
+      },
     },
     children: [
+      {
+        data: {
+          type: "text",
+          name: QuestionNames.MCPForDAServerName,
+          title: getLocalizedString("core.createProjectQuestion.mcpForDa.ServerName.title"),
+          placeholder: getLocalizedString(
+            "core.createProjectQuestion.mcpForDa.ServerName.placeholder"
+          ),
+        },
+      },
       {
         data: {
           type: "singleSelect",
@@ -363,36 +392,26 @@ export function MCPForDAServerUrlNode(): IQTreeNode {
               name: QuestionNames.MCPForDAPreFetchTools,
               title: getLocalizedString("core.createProjectQuestion.mcpForDa.PreFetchTools.title"),
               staticOptions: [],
-              dynamicOptions: async (inputs: Inputs): Promise<OptionItem[]> => {
-                const serverUrl = inputs[QuestionNames.MCPForDAServerUrl];
-                if (!serverUrl) {
+              dynamicOptions: (inputs: Inputs): OptionItem[] => {
+                const serverName = inputs[QuestionNames.MCPForDAServerName];
+                const availableTools: any[] = inputs[QuestionNames.MCPForDAAvailableTools];
+                if (!serverName || !availableTools) {
                   return [];
                 }
-                const transport = new StreamableHTTPClientTransport(new URL(serverUrl));
-                const client = new Client({
-                  name: "M365 Agent Toolkit",
-                  version: "1.0.0",
-                });
-                try {
-                  await client.connect(transport);
-                  const mcpTools = await client.listTools();
-                  inputs[QuestionNames.MCPForDAPreFetchToolsDetail] = mcpTools.tools;
-                  return mcpTools.tools.map((tool: any) => {
+                const tools = availableTools
+                  .filter((tool) => tool.name && tool.name.includes(serverName))
+                  .map((tool: any) => {
+                    const index = tool.name.indexOf(serverName);
+                    const newName = (tool.name as string).substring(
+                      (index as number) + (serverName.length as number) + 1
+                    );
                     return {
-                      id: tool.name,
-                      label: tool.name,
+                      id: newName,
+                      label: newName,
                       detail: tool.description || "",
                     };
                   });
-                } catch (error: any) {
-                  throw new UserError(
-                    "MCPForDAServerUrlError",
-                    "Failed to connect to MCP server",
-                    `Please check the MCP server URL: ${serverUrl as string}. Error: ${
-                      error.message as string
-                    }`
-                  );
-                }
+                return tools;
               },
             },
           },

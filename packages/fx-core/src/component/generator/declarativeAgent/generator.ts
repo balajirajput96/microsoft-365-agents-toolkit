@@ -82,6 +82,8 @@ export class DeclarativeAgentGenerator extends DefaultTemplateGenerator {
     const safeProjectNameFromVS =
       language === "csharp" ? inputs[QuestionNames.SafeProjectName] : undefined;
 
+    const McpAuth = inputs[QuestionNames.MCPForDAAuth] === "OAuthPluginVault" ? "true" : "false";
+
     const replaceMap = {
       ...Generator.getDefaultVariables(
         inputs[QuestionNames.TemplateName] === TemplateNames.DeclarativeAgentWithTypeSpec
@@ -93,6 +95,7 @@ export class DeclarativeAgentGenerator extends DefaultTemplateGenerator {
       ),
       DeclarativeCopilot: "true",
       MicrosoftEntra: auth === ApiAuthOptions.microsoftEntra().id ? "true" : "",
+      McpAuth: McpAuth ?? "false",
     };
     const templateName = inputs[QuestionNames.TemplateName];
 
