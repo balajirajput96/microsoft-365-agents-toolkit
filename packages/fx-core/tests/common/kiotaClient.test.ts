@@ -212,7 +212,7 @@ describe("kiotaClient", () => {
   });
 
   describe("listAPITreeInfo", () => {
-    const sandbox = sandbox.createSandbox();
+    const sandbox = sinon.createSandbox();
     afterEach(async () => {
       sandbox.restore();
     });
