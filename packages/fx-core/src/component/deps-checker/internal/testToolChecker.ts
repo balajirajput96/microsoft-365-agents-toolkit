@@ -81,7 +81,7 @@ export class TestToolChecker implements DepsChecker {
       } else {
         this.telemetryProperties[TelemetryProperties.SymlinkTestToolVersionError] =
           versionRes.error.message;
-        await unlinkSymlink(symlinkDir);
+        await unlinkSymlink(symlinkDir, true);
       }
     }
 
