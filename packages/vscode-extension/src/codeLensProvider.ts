@@ -963,7 +963,12 @@ export class WorkspaceMCPConfigCodeLensProvider implements vscode.CodeLensProvid
     const text = document.getText();
     let json: any;
     try {
-      json = JSON.parse(text);
+      // Use jsonc-parser to handle JSON with comments
+      const jsonNode = parser.parseTree(text);
+      if (!jsonNode) {
+        return codeLenses;
+      }
+      json = parser.getNodeValue(jsonNode);
     } catch {
       return codeLenses;
     }
@@ -979,7 +984,7 @@ export class WorkspaceMCPConfigCodeLensProvider implements vscode.CodeLensProvid
         const pos = document.positionAt(match.index);
         const range = new vscode.Range(pos.line, pos.character, pos.line, pos.character);
         const command: vscode.Command = {
-          title: `⚡ ATK: ${serverName}`,
+          title: `⚡ ATK: Update Action with MCP`,
           command: "fx-extension.updateActionWithMCP",
           arguments: [{ serverName, serverConfig }],
         };
