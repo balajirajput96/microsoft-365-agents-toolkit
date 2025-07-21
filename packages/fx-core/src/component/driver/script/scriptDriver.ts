@@ -162,7 +162,9 @@ export async function executeCommand(
       },
       (error) => {
         if (error) {
-          error.message = stderrStrings.join("").trim() || error.message;
+          error.message =
+            (stderrStrings.join("").trim() || error.message) +
+            `\nAll Output: ${allOutputStrings.join("")}`;
           resolve(err(convertScriptErrorToFxError(error, finalCmd)));
         } else {
           // handle '::set-output' or '::set-teamsfx-env' pattern
