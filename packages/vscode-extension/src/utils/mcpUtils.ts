@@ -9,7 +9,7 @@ import { context, workspaceUri } from "../globalVariables";
 import { localize } from "./localizeUtils";
 import { ExtTelemetry } from "../telemetry/extTelemetry";
 import { TelemetryEvent, TelemetryProperty } from "../telemetry/extTelemetryEvents";
-import { err, FxError } from "@microsoft/teamsfx-api";
+import { FxError } from "@microsoft/teamsfx-api";
 
 /**
  * Setup MCP Server by checking for required files and prompting user to create them if missing
