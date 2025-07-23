@@ -84,7 +84,9 @@ export class DeclarativeAgentGenerator extends DefaultTemplateGenerator {
     const solutionNameFromVS =
       language === "csharp" ? inputs[QuestionNames.SolutionName] : undefined;
 
-    const McpAuth = inputs[QuestionNames.MCPForDAAuth] === "OAuthPluginVault" ? "true" : "false";
+    const MCPForDAServerUrl = inputs[QuestionNames.MCPForDAServerUrl];
+    const serverUrl = new URL(MCPForDAServerUrl);
+    const serverName = serverUrl.host.replace(/[^a-zA-Z0-9]/g, "").substring(0, 10);
 
     const replaceMap = {
       ...Generator.getDefaultVariables(
@@ -98,7 +100,8 @@ export class DeclarativeAgentGenerator extends DefaultTemplateGenerator {
       ),
       DeclarativeCopilot: "true",
       MicrosoftEntra: auth === ApiAuthOptions.microsoftEntra().id ? "true" : "",
-      McpAuth: McpAuth ?? "false",
+      MCPForDAServerUrl: MCPForDAServerUrl,
+      ServerName: serverName,
     };
     const templateName = inputs[QuestionNames.TemplateName];
 
