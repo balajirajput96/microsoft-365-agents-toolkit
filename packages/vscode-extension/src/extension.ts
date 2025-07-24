@@ -1448,7 +1448,9 @@ async function runBackgroundAsyncTasks(
 
   await recommendACPExtension();
 
-  await Correlator.run(setupMCPServer);
+  if (isTeamsFxProject) {
+    await Correlator.run(setupMCPServer);
+  }
 
   await checkProjectTypeAndSendTelemetry();
 }
