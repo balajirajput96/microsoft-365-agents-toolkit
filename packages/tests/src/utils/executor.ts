@@ -68,7 +68,7 @@ export class Executor {
           console.error(`[Failed] "${command}" in ${cwd}. Timeout and killed.`);
         } else {
           console.error(
-            `[Failed] "${command}" in ${cwd} with error: ${e.message}`
+            `[Failed] "${command}" in ${cwd} with error: ${JSON.stringify(e)}`
           );
         }
         retryCount++;
