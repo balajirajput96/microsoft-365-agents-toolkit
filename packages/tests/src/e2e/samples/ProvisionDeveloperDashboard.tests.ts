@@ -16,7 +16,7 @@ class AssistDashboardTestCase extends CaseFactory {
   public override async onAfterCreate(projectPath: string): Promise<void> {
     expect(fs.pathExistsSync(path.resolve(projectPath, "infra"))).to.be.true;
     // remove teamsApp/extendToM365 in case it fails
-    removeTeamsAppExtendToM365(path.join(projectPath, "teamsapp.yml"));
+    removeTeamsAppExtendToM365(path.join(projectPath, "m365agents.yml"));
 
     const envFilePath = path.resolve(projectPath, "env", `.env.dev.user`);
     const envString =
