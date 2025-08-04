@@ -2988,7 +2988,6 @@ export class FxCore {
     if (!projectPath) {
       throw new Error("projectPath is undefined"); // should never happen
     }
-    // TODO: allow not default plugin manifest file
     const aiPluginFilePath = inputs[QuestionNames.PluginManifestFilePath] as string;
     if (!(await fs.pathExists(aiPluginFilePath))) {
       const error = new SystemError(
@@ -2999,6 +2998,7 @@ export class FxCore {
       );
       return err(error);
     }
+    const aiPluginFilePathRelative = path.basename(aiPluginFilePath);
 
     const mcpServerUrl = inputs[QuestionNames.MCPForDAServerUrl];
     const serverName = inputs[QuestionNames.MCPForDAServerName] as string;
@@ -3147,7 +3147,7 @@ export class FxCore {
     void context.userInteraction
       .showMessage(
         "info",
-        getLocalizedString("core.MCPForDA.updatePluginManifest"),
+        getLocalizedString("core.MCPForDA.updatePluginManifest", aiPluginFilePathRelative),
         false,
         "Provision"
       )
