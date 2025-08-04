@@ -50,7 +50,7 @@ jobs:
       - name: CodeCov report attempt 1
         id: codecov1
         continue-on-error: true
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
@@ -65,7 +65,7 @@ jobs:
         id: codecov2
         if: steps.codecov1.outcome == 'failure'
         continue-on-error: true
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
@@ -80,7 +80,7 @@ jobs:
         id: codecov3
         if: steps.codecov2.outcome == 'failure'
         continue-on-error: true
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
@@ -95,7 +95,7 @@ jobs:
         id: codecov4
         if: steps.codecov3.outcome == 'failure'
         continue-on-error: true
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
@@ -109,7 +109,7 @@ jobs:
       - name: CodeCov report attempt 5
         id: codecov5
         if: steps.codecov4.outcome == 'failure'
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
