@@ -25,11 +25,11 @@ describe("utils unit test cases", () => {
 
   it("should return the correct URL for a given version", () => {
     const version = "6.0.0";
-    const perfix = "templates@";
+    const prefix = "templates@";
     const name = "js";
     const expectedUrl =
       "https://github.com/OfficeDev/microsoft-365-agents-toolkit/releases/download/templates@6.0.0/js.zip";
-    const result = getTemplateZipUrlByVersion(name, version, perfix);
+    const result = getTemplateZipUrlByVersion(name, version, prefix);
     assert.strictEqual(result, expectedUrl);
   });
 
