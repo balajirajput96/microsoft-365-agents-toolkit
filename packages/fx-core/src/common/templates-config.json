@@ -9,5 +9,5 @@
     "templateReleaseURL": "https://github.com/OfficeDev/microsoft-365-agents-toolkit/releases/expanded_assets",
     "templateDownloadBasePath": "/OfficeDev/microsoft-365-agents-toolkit/releases/download",
     "templateExt": ".zip",
-    "useLocalTemplate": true
+    "useLocalTemplate": false
 }
