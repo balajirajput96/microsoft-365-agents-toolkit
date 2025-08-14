@@ -1744,7 +1744,7 @@ export async function validatePrompt(
     await page.waitForTimeout(Timeout.shortTimeLoading);
     console.log("start to verify prompt");
     const contenteditableSpan = await page?.waitForSelector(
-      'span[aria-label="Message Copilot"]'
+      'span[aria-label="Chat Input"]'
     );
     await contenteditableSpan?.click();
     await contenteditableSpan.fill(options?.prompt || "list repairs");
