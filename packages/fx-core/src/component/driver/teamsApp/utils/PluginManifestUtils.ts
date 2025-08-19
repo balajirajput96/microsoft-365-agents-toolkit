@@ -30,6 +30,7 @@ import { EOL } from "os";
 import { ManifestType } from "../../../utils/envFunctionUtils";
 import { DriverContext } from "../../interface/commonArgs";
 import { isJsonSpecFile } from "../../../../common/utils";
+import { featureFlagManager, FeatureFlags } from "../../../../common/featureFlags";
 
 export class PluginManifestUtils {
   public async readPluginManifestFile(
@@ -185,7 +186,10 @@ export class PluginManifestUtils {
     } catch (e) {}
 
     let openApiSpecFileName =
-      apiSpecFileName ?? (isYaml ? DefaultApiSpecYamlFileName : DefaultApiSpecJsonFileName);
+      apiSpecFileName ??
+      (isYaml || featureFlagManager.getBooleanValue(FeatureFlags.KiotaNPMIntegration)
+        ? DefaultApiSpecYamlFileName
+        : DefaultApiSpecJsonFileName);
     // Check if the default file name already exists
     if (!(await fs.pathExists(path.join(apiSpecFolder, openApiSpecFileName)))) {
       return path.join(apiSpecFolder, openApiSpecFileName);
