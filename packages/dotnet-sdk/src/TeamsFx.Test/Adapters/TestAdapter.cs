@@ -274,7 +274,7 @@ namespace Microsoft.TeamsFx.Test
                     activity.Timestamp = DateTime.UtcNow;
                 }
 
-                if (activity.Type == ActivityTypes.Delay)
+                if (activity.Type == "delay")
                 {
                     // The BotFrameworkAdapter and Console adapter implement this
                     // directly in the POST method. Replicating that here
