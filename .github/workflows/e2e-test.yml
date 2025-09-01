@@ -213,7 +213,7 @@ jobs:
           npm install -g @microsoft/m365agentstoolkit-cli@${{ github.event.inputs.cli-version }}
 
       - name: install cli for schedule
-        if: ${{  github.event_name == 'schedule' || ( github.event.ref == 'refs/heads/dev' && github.event_name == 'workflow_dispatch' && github.event.inputs.cli-version == '' ) }}
+        if: ${{  github.event_name == 'schedule' || github.event_name == 'pull_request' || ( github.event.ref == 'refs/heads/dev' && github.event_name == 'workflow_dispatch' && github.event.inputs.cli-version == '' ) }}
         run: |
           npm install -g @microsoft/m365agentstoolkit-cli@alpha
       
@@ -222,18 +222,12 @@ jobs:
         run: |
           pnpm link --global
 
-      - name: Update CLI and legacy-peer-deps for PR cases
-        if: ${{  github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == 'OfficeDev/microsoft-365-agents-toolkit'  }}
-        run: |
-          npm install -g @microsoft/m365agentstoolkit-cli@alpha
-          npm config set legacy-peer-deps false
-
       - name: print system info
         run: |
           lscpu
 
       - name: Download samples(daily)
-        if: github.event_name == 'schedule' && startsWith(matrix.cases, './samples/') && contains(matrix.cases, 'ProactiveMessage') == false
+        if: (github.event_name == 'schedule'  || github.event_name == 'pull_request') && startsWith(matrix.cases, './samples/') && contains(matrix.cases, 'ProactiveMessage') == false
         uses: actions/checkout@v3
         with:
           repository: OfficeDev/TeamsFx-Samples
