@@ -401,6 +401,7 @@ export type AppType =
   | "msgmulparams"
   | "msgapikeyspec"
   | "daAction"
+  | "weather"
   | "daOpenAPI";
 
 export class FeatureFlagName {
@@ -531,6 +532,7 @@ export class CreateProjectQuestion {
   static readonly DeclarativeAgent = "Declarative Agent";
   static readonly BasicCustomEngineAgent = "Basic Custom Engine Agent";
   static readonly BasicAgentForTeams = "Basic Agent for Teams";
+  static readonly WeatherAgent = "Weather Agent";
 }
 
 export class ValidationContent {
@@ -545,6 +547,9 @@ export class ValidationContent {
   static readonly AiBotErrorMessage3 = "The bot encountered an error or bug";
   static readonly AiBotErrorMessage2 = "An AI request failed";
   static readonly AiBotMeetingMessage = "Team Meeting";
+  static readonly WeatherBotMessageWelcomeInstruction =
+    "Hello and Welcome! I'm here to help with all your weather forecast needs!";
+  static readonly WeatherBotMessage = "Weather Forecast for San Francisco";
 }
 
 export class CliVersion {
