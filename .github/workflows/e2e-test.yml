@@ -83,6 +83,7 @@ jobs:
           client-id: 'ef52cf74-a610-497c-9728-8eaefe9450a5'   # App with federated credential
           tenant-id: '72f988bf-86f1-41af-91ab-2d7cd011db47'
           enable-AzureAD-OIDC: true
+          subscription-id: 'f744fbde-a95f-437e-8fcf-38f9324e3d9c'   # REQUIRED
 
       - name: setup project
         uses: ./.github/actions/setup-project
