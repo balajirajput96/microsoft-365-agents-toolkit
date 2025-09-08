@@ -101,7 +101,6 @@ app.on('message', async ({ send, activity }) => {
       {{/useAzureOpenAI}}
     });
 
-
     const response = await prompt.send(activity.text);
     
     // Create response with AI generated indicator and add citations if we used context
