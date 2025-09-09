@@ -202,7 +202,7 @@ export function llmServiceNode(
         children: [
           {
             condition: (inputs: Inputs) => {
-              return inputs[QuestionNames.AzureOpenAIKey]?.length > 0;
+              return inputs[QuestionNames.AzureOpenAIKey].length > 0;
             },
             data: {
               type: "text",
@@ -217,7 +217,7 @@ export function llmServiceNode(
             children: [
               {
                 condition: (inputs: Inputs) => {
-                  return inputs[QuestionNames.AzureOpenAIEndpoint]?.length > 0;
+                  return inputs[QuestionNames.AzureOpenAIEndpoint].length > 0;
                 },
                 data: {
                   type: "text",
