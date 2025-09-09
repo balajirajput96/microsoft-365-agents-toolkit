@@ -62,6 +62,27 @@ describe("FxCore.createProject", () => {
     assert.isTrue(res.isOk());
   });
 
+  it("create teams agent", async () => {
+    sandbox.stub(coordinator, "create").resolves(ok({ projectPath: "" }));
+    const inputs: Inputs = {
+      platform: Platform.VSCode,
+      [QuestionNames.Scratch]: ScratchOptions.yes().id,
+      [QuestionNames.ProjectType]: ProjectTypeOptions.teamsOptionId,
+      [QuestionNames.TeamsAppType]: "custom-copilot-basic",
+      [QuestionNames.LLMService]: "llm-service-azure-openai",
+      [QuestionNames.AzureOpenAIKey]: "mockedAzureOpenAIKey",
+      [QuestionNames.AzureOpenAIEndpoint]: "mockedAzureOpenAIEndpoint",
+      [QuestionNames.AzureOpenAIDeploymentName]: "mockedAzureOpenAIDeploymentName",
+      [QuestionNames.ProgrammingLanguage]: "javascript",
+      [QuestionNames.Folder]: os.tmpdir(),
+      [QuestionNames.AppName]: randomAppName(),
+    };
+    sandbox.stub(tools, "logProvider").value(undefined);
+    const core = new FxCore(tools);
+    const res = await core.createProject(inputs);
+    assert.isTrue(res.isOk());
+  });
+
   it("startWithGithubCopilot", async () => {
     sandbox.stub(coordinator, "create").resolves(ok({ projectPath: "" }));
     const inputs: Inputs = {
