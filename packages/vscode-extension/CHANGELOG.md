@@ -2,6 +2,52 @@
 
 > Note: This changelog only includes the changes for the stable versions of Microsoft 365 Agents Toolkit (evolved from Teams Toolkit). For the changelog of pre-released versions, please refer to the [Microsoft 365 Agents Toolkit Pre-release Changelog](https://github.com/OfficeDev/TeamsFx/blob/dev/packages/vscode-extension/PRERELEASE.md).
 
+## 6.2.0 - Sep 18, 2025
+This release introduces new features in agents developing and comprehensively upgrading Teams agents and app development with the new generation of Teams AI library V2. These incremental enhancements were previously documented in the prerelease version and a blog post: 
+
+Below is a comprehensive list of new features, enhancements, and bug fixes:
+
+### New Features
+
+**Uploading declarative agents with different scope**
+
+In previous version declarative agents are by default uploading to Copilot with `Personal` scope, while in this release we allow users to upload their declarative agents with a `Shared` scope to Copilot platform. If users want to share their agents with others later, they must upload the agents with shared scope first. This is controlled by the `AGENT_SCOPE` parameter defined in environment config files and will then by passed to "extendToM365" action in "Provision" lifecycle stage.
+
+> If you are using ATK CLI, specify the install scope by: `atk install --file-path [Your zip package path] -scope [Shared/Personal] ` or run `atk install -h` to get help.
+
+**Share declarative agents to specified audience**
+
+Users are now able to share their declrative agents with all tenant users or specify a group of users by naming their email address through ATK UI or ATK CLI.
+You will notice there is a new button available in lifecycle management panel which is "Share":
+<img width="1031" height="661" alt="image" src="https://github.com/user-attachments/assets/7ca5ff5b-02ee-4d90-994a-c8e4f9a9b12f" />
+
+> If you are using ATK CLI, share the agent by:`atk share -scope [tenant/users]` or run `atk share -h` to get help.
+
+**Comprehensivly upgrading Teams Agents and apps templates**
+
+We’re thrilled to announce that in this release, all Teams agents and Teams app project templates have been upgraded to use the next generation and modern Teams SDK — the Teams AI Library V2!
+
+These brand-new templates showcase what’s possible with Teams AI library v2:
+
+Seamless connection to Large Language Models (LLMs) of your choice – plug in OpenAI, Azure OpenAI, or others, all without rewriting your core bot logic.
+
+Built-in support to connect to external data sources (think real-time info, domain-specific content) so your apps stay current, relevant, and responsive.
+
+Deep integration with Teams’ UI: adaptive cards that look and behave like native components, expressive emojis, rich interactive elements, and more.
+
+With these updates, developers can now spin up fully functional Teams agents faster than ever, enjoy a smoother development journey, and deliver delightful user experiences that feel truly native.
+
+<img width="1128" height="686" alt="image" src="https://github.com/user-attachments/assets/fbd9bdd1-2428-47e1-bf59-dd9d809e84e2" />
+
+Let’s build smarter, more interactive Teams apps together! 💡
+
+### Enhancement 
+
+- Updated the [app manifest version to v1.23](https://developer.microsoft.com/json-schemas/teams/v1.23/MicrosoftTeams.schema.json).
+- Updated [Declarative Agents manifest version to v1.5](https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/declarative-agent-manifest-1.5).
+- Updated [Microsoft 365 Agents SDK to v1.0.0](https://www.npmjs.com/package/@microsoft/agents-hosting).
+
+
 ## 6.0.3 - Jul 19, 2025
 Hotfix version
 
