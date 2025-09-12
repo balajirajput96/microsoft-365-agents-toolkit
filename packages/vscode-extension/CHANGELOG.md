@@ -3,27 +3,34 @@
 > Note: This changelog only includes the changes for the stable versions of Microsoft 365 Agents Toolkit (evolved from Teams Toolkit). For the changelog of pre-released versions, please refer to the [Microsoft 365 Agents Toolkit Pre-release Changelog](https://github.com/OfficeDev/TeamsFx/blob/dev/packages/vscode-extension/PRERELEASE.md).
 
 ## 6.2.0 - Sep 18, 2025
-This release introduces new features in agents developing and comprehensively upgrading Teams agents and app development with the new generation of Teams AI library V2. These incremental enhancements were previously documented in the prerelease version and a blog post: 
+This release marks a major step forward in agent development and Teams app innovation, as we comprehensively upgrade Teams agents and app project templates to the new generation **Teams AI Library V2**.
 
-Below is a comprehensive list of new features, enhancements, and bug fixes:
+Building on the incremental enhancements previously introduced in the [prerelease version](https://github.com/OfficeDev/microsoft-365-agents-toolkit/blob/dev/packages/vscode-extension/PRERELEASE.md), this release brings a streamlined developer experience, deeper Teams integration, and expanded AI capabilities.
+
+Below you’ll find a comprehensive list of new featuree and enhancements included in this release:
 
 ### New Features
 
-**Uploading declarative agents with different scope**
+**Declarative agents: expand scope support**
 
-In previous version declarative agents are by default uploading to Copilot with `Personal` scope, while in this release we allow users to upload their declarative agents with a `Shared` scope to Copilot platform. If users want to share their agents with others later, they must upload the agents with shared scope first. This is controlled by the `AGENT_SCOPE` parameter defined in environment config files and will then by passed to "extendToM365" action in "Provision" lifecycle stage.
+In previous versions, declarative agents were uploaded to Copilot with the default `Personal` scope. With this release, developers can now upload their declarative agents using a `Shared` scope, enabling broader distribution on the Copilot platform.
+
+⚠️ Note: If you plan to share an agent with others later, it must be uploaded with the Shared scope from the start.
+
+This behavior is controlled through the `AGENT_SCOPE` parameter defined in the environment configuration files. The parameter value is passed to the `extendToM365` action during the `Provision` lifecycle stage.
 
 > If you are using ATK CLI, specify the install scope by: `atk install --file-path [Your zip package path] -scope [Shared/Personal] ` or run `atk install -h` to get help.
 
-**Share declarative agents to specified audience**
+**Declarative agents: sharing made easy**
 
-Users are now able to share their declrative agents with all tenant users or specify a group of users by naming their email address through ATK UI or ATK CLI.
-You will notice there is a new button available in lifecycle management panel which is "Share":
+Users can now share their declarative agents more flexibly — either with all tenant users or with a specific group of users by listing their email addresses. This can be done directly through the ATK UI or via the ATK CLI.
+
+To make this simpler, a new “Share” button has been added to the lifecycle management panel, giving you a quick and intuitive way to manage agent access.
 <img width="1031" height="661" alt="image" src="https://github.com/user-attachments/assets/7ca5ff5b-02ee-4d90-994a-c8e4f9a9b12f" />
 
 > If you are using ATK CLI, share the agent by:`atk share -scope [tenant/users]` or run `atk share -h` to get help.
 
-**Comprehensivly upgrading Teams Agents and apps templates**
+**Comprehensive upgrade Teams Agents and apps templates**
 
 We’re thrilled to announce that in this release, all Teams agents and Teams app project templates have been upgraded to use the next generation and modern Teams SDK — the Teams AI Library V2!
 
