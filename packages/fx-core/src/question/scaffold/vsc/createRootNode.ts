@@ -199,6 +199,7 @@ export function getProjectTypeByCapability(capability: string): string {
   if (
     [
       OfficeAddinCapabilityOptions.wxpTaskPane().id,
+      OfficeAddinCapabilityOptions.excelCFShortcut().id,
       OfficeAddinCapabilityOptions.officeAddinImport().id,
     ].includes(capability)
   ) {

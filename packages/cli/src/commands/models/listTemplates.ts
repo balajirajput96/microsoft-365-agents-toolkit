@@ -62,6 +62,7 @@ export function listAllCapabilities(): OptionItem[] {
     // MeCapabilityOptions.collectFormMe(),
     // MeCapabilityOptions.linkUnfurling(),
     OfficeAddinCapabilityOptions.wxpTaskPane(),
+    OfficeAddinCapabilityOptions.excelCFShortcut(),
     OfficeAddinCapabilityOptions.outlookTaskPane(),
   ];
 }
