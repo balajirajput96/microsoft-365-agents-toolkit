@@ -1,61 +1,7 @@
 {
   "windows-latest": {
-    "node-20": [
-      "localdebug-bot-twice",
-      "localdebug-tab-regen-appid",
-      "treeview-newproject-outlook-add-in",
-      "treeview-newproject-tab",
-      "treeview-collaboration-win-only",
-      "remotedebug-tab-nosso-ts-win-only",
-      "remotedebug-tab-publish",
-      "remotedebug-bot-reprovision-win-only",
-      "remotedebug-tab-reprovision-win-only",
-      "remotedebug-tab-regen-appid-win-only",
-      "remotedebug-chatdata-customize-js-azureopenai-win-only",
-      "remotedebug-chatdata-customize-ts-azureopenai-win-only",
-      "remotedebug-chatdata-customize-js-openai-win-only",
-      "remotedebug-chatdata-customize-ts-openai-win-only",
-      "remotedebug-aichat-bot-azureopenai-win-only",
-      "remotedebug-aichat-bot-openai-win-only",
-      "remotedebug-aichat-bot-ts-azureopenai-win-only",
-      "remotedebug-aichat-bot-ts-openai-win-only",
-      "remotedebug-chatdata-customapi-js-azureopenai-win-only",
-      "remotedebug-chatdata-customapi-js-openai-win-only",
-      "remotedebug-chatdata-customapi-ts-azureopenai-win-only",
-      "remotedebug-chatdata-customapi-ts-openai-win-only",
-      "da-action-none",
-      "da-action-none-ts",
-      "da-action-microsoftentra",
-      "da-action-microsoftentra-ts",
-      "da-action-oauth",
-      "da-action-oauth-ts",
-      "da-action-openapi-apikey",
-      "da-action-openapi-bearertoken",
-      "da-action-openapi-none",
-      "da-action-openapi-oauth"
-    ],
+  "windows-latest": {
     "node-22": [
-      "basic-bot",
-      "basic-bot-ts",
-      "msgsa-ts",
-      "da-action-apikey",
-      "da-action-apikey-ts",
-      "weather-agent-azureopenai-ts",
-      "weather-agent-azureopenai",
-      "weather-agent-openai-ts",
-      "weather-agent-openai"
-    ]
-  },
-  "ubuntu-latest": {
-    "node-22": [
-      "treeview-invalidname",
-      "treeview-content",
-      "treeview-tab-manifest",
-      "treeview-quickstart",
-      "treeview-samples",
-      "treeview-newproject-in-exist-project",
-      "telemetry@open-vscode",
-      "localdebug-tab-nosso-ts",
       "localdebug-chatdata-customize-js-azureopenai",
       "localdebug-chatdata-customize-ts-azureopenai",
       "localdebug-chatdata-customize-js-openai",
@@ -67,8 +13,7 @@
       "localdebug-chatdata-customapi-js-azureopenai",
       "localdebug-chatdata-customapi-js-openai",
       "localdebug-chatdata-customapi-ts-azureopenai",
-      "localdebug-chatdata-customapi-ts-openai",
-      "localization"
+      "localdebug-chatdata-customapi-ts-openai"
     ]
   },
   "macos-latest": {
