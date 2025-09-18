@@ -1,6 +1,5 @@
 {
   "windows-latest": {
-  "windows-latest": {
     "node-22": [
       "localdebug-chatdata-customize-js-azureopenai",
       "localdebug-chatdata-customize-ts-azureopenai",
