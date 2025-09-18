@@ -116,7 +116,6 @@ jobs:
         run: |
           curl -O https://raw.githubusercontent.com/OfficeDev/microsoft-365-agents-toolkit-samples/refs/heads/dev/.config/samples-config-v3.json
           pnpm --filter=@microsoft/teamsfx-test install
-          npx ts-node ./scripts/sampleCaseCreate.ts
 
       - name: setup matrix
         id: setup-matrix
