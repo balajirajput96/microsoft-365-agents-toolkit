@@ -1,0 +1,122 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Chrome",
+            "request": "launch",
+            "type": "chrome",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}/packages/vscode-extension"
+            ],
+            "name": "Launch Extension",
+            "outFiles": [
+                "${workspaceFolder}/packages/vscode-extension/out/**/*.js"
+            ],
+            "request": "launch",
+            "type": "extensionHost",
+            "env": {
+                "NODE_ENV": "development",
+                "TEAMSFX_SAMPLE_CONFIG_BRANCH": "dev"
+            }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Node Server",
+            "program": "${workspaceFolder}/packages/server/lib/index.js",
+            "env": {
+                "NODE_ENV": "development"
+            },
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch CLI",
+            "program": "${workspaceFolder}/packages/cli/lib/index.js",
+            "args": [
+                "--version"
+            ],
+            "env": {
+                "NODE_ENV": "development"
+            },
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Attach to Process",
+            "processId": "${command:PickProcess}",
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug Extension Tests",
+            "program": "${workspaceFolder}/packages/vscode-extension/node_modules/mocha/bin/_mocha",
+            "args": [
+                "${workspaceFolder}/packages/vscode-extension/test/**/*.test.ts",
+                "--require=ts-node/register",
+                "--recursive",
+                "--colors"
+            ],
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug CLI Tests",
+            "program": "${workspaceFolder}/packages/cli/node_modules/mocha/bin/_mocha",
+            "args": [
+                "${workspaceFolder}/packages/cli/tests/unit/**/*.tests.ts",
+                "--require=ts-node/register",
+                "--recursive",
+                "--colors"
+            ],
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug API Package",
+            "program": "${workspaceFolder}/packages/api/lib/index.js",
+            "env": {
+                "NODE_ENV": "development"
+            },
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Extension + Web Client",
+            "configurations": [
+                "Launch Extension",
+                "Launch Chrome"
+            ]
+        },
+        {
+            "name": "Full Stack Debug",
+            "configurations": [
+                "Launch Extension",
+                "Launch Node Server",
+                "Launch Chrome"
+            ]
+        }
+    ]
+}
