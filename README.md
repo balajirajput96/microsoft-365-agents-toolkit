@@ -32,6 +32,17 @@ Pick your preferred tool to get started:
 
 Visit [Microsoft 365 Agents Toolkit documentation](https://aka.ms/teamsfx-docs) to get started with building agents and apps.
 
+## Enterprise Deployment
+
+For enterprise-scale deployments with CI/CD automation and third-party integrations:
+
+- **[Enterprise Deployment Guide](docs/enterprise-deployment.md)** - Comprehensive guide for production deployments
+- **[GitHub Enterprise Integration](docs/integrations/github-enterprise.md)** - Set up CI/CD with GitHub Actions
+- **[Atlassian Integration](docs/integrations/atlassian-integration.md)** - Connect with Jira and Confluence
+- **[Slack Integration](docs/integrations/slack-integration.md)** - Enable real-time notifications and ChatOps
+
+See the [integrations directory](docs/integrations/) for more details.
+
 ## Roadmap
 
 Microsoft 365 Agents Toolkit for Visual Studio, Visual Studio Code, and Command Line Interface (CLI) will be updated regularly with new features and bug fixes to continuously improve end-to-end Teams development experience. Visit our [Changelog](https://github.com/OfficeDev/teams-toolkit/blob/dev/packages/vscode-extension/CHANGELOG.md) and [Prerelease Changelog](https://github.com/OfficeDev/teams-toolkit/blob/dev/packages/vscode-extension/PRERELEASE.md) to see what's available for you now and see [product roadmap](https://aka.ms/teamsfx-roadmap) to find out what's coming.
