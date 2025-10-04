@@ -32,6 +32,16 @@ Pick your preferred tool to get started:
 
 Visit [Microsoft 365 Agents Toolkit documentation](https://aka.ms/teamsfx-docs) to get started with building agents and apps.
 
+## Deployment
+
+Ready to deploy your Microsoft 365 agent or application? Check out our comprehensive [Deployment Guide](./DEPLOYMENT.md) for:
+
+- Step-by-step deployment instructions for CLI, VS Code, and Visual Studio
+- Automated deployment scripts for CI/CD pipelines
+- Azure deployment configurations (App Service, Functions, Static Web Apps)
+- GitHub Actions and Azure DevOps integration examples
+- Troubleshooting tips and best practices
+
 ## Roadmap
 
 Microsoft 365 Agents Toolkit for Visual Studio, Visual Studio Code, and Command Line Interface (CLI) will be updated regularly with new features and bug fixes to continuously improve end-to-end Teams development experience. Visit our [Changelog](https://github.com/OfficeDev/teams-toolkit/blob/dev/packages/vscode-extension/CHANGELOG.md) and [Prerelease Changelog](https://github.com/OfficeDev/teams-toolkit/blob/dev/packages/vscode-extension/PRERELEASE.md) to see what's available for you now and see [product roadmap](https://aka.ms/teamsfx-roadmap) to find out what's coming.
