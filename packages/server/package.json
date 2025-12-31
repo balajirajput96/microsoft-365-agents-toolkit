@@ -52,7 +52,7 @@
     "@types/underscore": "^1.11.0",
     "@types/uuid": "^8.3.0",
     "@types/validator": "^13.7.2",
-    "@types/ws": "^8.2.0",
+    "@types/ws": "^8.18.1",
     "@typescript-eslint/eslint-plugin": "^4.19.0",
     "@typescript-eslint/parser": "^4.19.0",
     "chai": "^4.2.0",
@@ -89,20 +89,20 @@
     "umd-compat-loader": "^2.1.2",
     "url-loader": "^4.1.1",
     "uuid": "^8.3.2",
-    "webpack": "^5.76.0",
+    "webpack": "^5.94.0",
     "webpack-cli": "^4.7.2"
   },
   "dependencies": {
     "@azure/core-auth": "^1.4.0",
-    "@azure/identity": "^4.1.0",
+    "@azure/identity": "^4.2.1",
     "@microsoft/dev-tunnels-contracts": "1.1.9",
     "@microsoft/teamsfx-api": "workspace:*",
     "@microsoft/teamsfx-core": "workspace:*",
     "fs-extra": "^9.1.0",
     "underscore": "^1.12.1",
-    "validator": "^13.7.0",
+    "validator": "^13.15.22",
     "vscode-jsonrpc": "^6.0.0",
-    "ws": "^8.17.1"
+    "ws": "^8.18.3"
   },
   "optionalDependencies": {
     "keytar": "^7.7.0"
