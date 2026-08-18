@@ -14,6 +14,7 @@ jobs:
   unit-test:
     runs-on: ubuntu-latest
     env:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       CODECOV_FILES: packages/api/coverage/lcov.info,packages/vscode-ui/coverage/lcov.info,packages/fx-core/coverage/lcov.info,packages/manifest/coverage/lcov.info,packages/vscode-extension/coverage/lcov.info,packages/server/coverage/lcov.info,packages/spec-parser/coverage/lcov.info,packages/cli/coverage/lcov.info,packages/cli/coverage/coverage-summary.json
     steps:
       - name: Checkout-pr
@@ -54,6 +55,8 @@ jobs:
 
       - name: CodeCov report attempt 1
         id: codecov1
+        if: ${{ env.CODECOV_TOKEN != '' }}
+        timeout-minutes: 2
         continue-on-error: true
         uses: codecov/codecov-action@v4
         with:
@@ -70,7 +73,8 @@ jobs:
 
       - name: CodeCov report attempt 2
         id: codecov2
-        if: steps.codecov1.outcome == 'failure'
+        if: ${{ env.CODECOV_TOKEN != '' && steps.codecov1.outcome == 'failure' }}
+        timeout-minutes: 2
         continue-on-error: true
         uses: codecov/codecov-action@v3
         with:
@@ -87,7 +91,8 @@ jobs:
 
       - name: CodeCov report attempt 3
         id: codecov3
-        if: steps.codecov2.outcome == 'failure'
+        if: ${{ env.CODECOV_TOKEN != '' && steps.codecov2.outcome == 'failure' }}
+        timeout-minutes: 2
         continue-on-error: true
         uses: codecov/codecov-action@v3
         with:
@@ -104,7 +109,8 @@ jobs:
 
       - name: CodeCov report attempt 4
         id: codecov4
-        if: steps.codecov3.outcome == 'failure'
+        if: ${{ env.CODECOV_TOKEN != '' && steps.codecov3.outcome == 'failure' }}
+        timeout-minutes: 2
         continue-on-error: true
         uses: codecov/codecov-action@v3
         with:
@@ -121,7 +127,8 @@ jobs:
 
       - name: CodeCov report attempt 5
         id: codecov5
-        if: steps.codecov4.outcome == 'failure'
+        if: ${{ env.CODECOV_TOKEN != '' && steps.codecov4.outcome == 'failure' }}
+        timeout-minutes: 2
         continue-on-error: true
         uses: codecov/codecov-action@v3
         with:
