@@ -3,11 +3,14 @@
 
 import sourcemaps from "rollup-plugin-sourcemaps";
 import replace from "@rollup/plugin-replace";
-import nodeResolve from "@rollup/plugin-node-resolve";
+import { nodeResolve } from "@rollup/plugin-node-resolve";
 import cjs from "@rollup/plugin-commonjs";
 import typescript from "rollup-plugin-typescript2";
-import pkg from "./package.json";
+import { createRequire } from "node:module";
 import json from "@rollup/plugin-json";
+
+const require = createRequire(import.meta.url);
+const pkg = require("./package.json");
 
 export default {
   input: "src/index.ts",
