@@ -6,7 +6,7 @@ import replace from "@rollup/plugin-replace";
 import nodeResolve from "@rollup/plugin-node-resolve";
 import cjs from "@rollup/plugin-commonjs";
 import typescript from "rollup-plugin-typescript2";
-import pkg from "./package.json";
+import pkg from "./package.json" with { type: "json" };
 import json from "@rollup/plugin-json";
 
 export default {
