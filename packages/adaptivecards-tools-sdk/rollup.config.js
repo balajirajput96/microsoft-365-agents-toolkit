@@ -1,13 +1,21 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import sourcemaps from "rollup-plugin-sourcemaps";
-import replace from "@rollup/plugin-replace";
-import nodeResolve from "@rollup/plugin-node-resolve";
-import cjs from "@rollup/plugin-commonjs";
-import typescript from "rollup-plugin-typescript2";
-import pkg from "./package.json" with { type: "json" };
-import json from "@rollup/plugin-json";
+import * as sourcemapsModule from "rollup-plugin-sourcemaps";
+import * as replaceModule from "@rollup/plugin-replace";
+import * as nodeResolveModule from "@rollup/plugin-node-resolve";
+import * as cjsModule from "@rollup/plugin-commonjs";
+import * as typescriptModule from "rollup-plugin-typescript2";
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const pkg = require("./package.json");
+import * as jsonModule from "@rollup/plugin-json";
+const sourcemaps = sourcemapsModule.default ?? sourcemapsModule;
+const replace = replaceModule.default ?? replaceModule;
+const nodeResolve = nodeResolveModule.nodeResolve ?? nodeResolveModule.default ?? nodeResolveModule;
+const cjs = cjsModule.default ?? cjsModule;
+const typescript = typescriptModule.default ?? typescriptModule;
+const json = jsonModule.default ?? jsonModule;
 
 export default {
   input: "src/index.ts",

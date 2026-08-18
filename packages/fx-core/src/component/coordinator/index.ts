@@ -989,7 +989,10 @@ function downloadSampleHook(sampleId: string, sampleAppPath: string): void {
           content = content.replace(reg, componentId);
           await fs.writeFile(file, content);
         })
+<<<<<<< HEAD
       )
+=======
+>>>>>>> 2134570ca5 (fix: align MCP server with current dependency toolchain)
     );
   }
 }
