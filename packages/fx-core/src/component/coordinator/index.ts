@@ -989,10 +989,28 @@ function downloadSampleHook(sampleId: string, sampleAppPath: string): void {
           content = content.replace(reg, componentId);
           await fs.writeFile(file, content);
         })
-<<<<<<< HEAD
       )
 =======
->>>>>>> 2134570ca5 (fix: align MCP server with current dependency toolchain)
+    const globApi = globModule as unknown as {
+      globSync?: (pattern: string, options: { nodir: boolean; dot: boolean }) => string[];
+      sync?: (pattern: string, options: { nodir: boolean; dot: boolean }) => string[];
+      glob?: { sync?: (pattern: string, options: { nodir: boolean; dot: boolean }) => string[] };
+    };
+    const pattern = `${sampleAppPath}/**/*.json`;
+    const options = { nodir: true, dot: true };
+    const files =
+      globApi.globSync?.(pattern, options) ??
+      globApi.sync?.(pattern, options) ??
+      globApi.glob?.sync?.(pattern, options) ??
+      [];
+    void Promise.all(
+      files.map(async (file) => {
+        let content = (await fs.readFile(file)).toString();
+        const reg = new RegExp(originalId, "g");
+        content = content.replace(reg, componentId);
+        await fs.writeFile(file, content);
+      })
+>>>>>>> 93646a6039 (fix: align MCP server with current dependency toolchain)
     );
   }
 }
