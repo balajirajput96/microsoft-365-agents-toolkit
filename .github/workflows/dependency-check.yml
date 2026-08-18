@@ -31,3 +31,10 @@ jobs:
           configurationFile: .github/renovate.json
         env:
           RENOVATE_FORK_TOKEN: "${{ secrets.FORK_RENOVATE_PAT }}"
+
+  renovate-not-configured:
+    if: ${{ vars.RENOVATE_ENABLED != 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Confirm Renovate is safely disabled
+        run: echo "Renovate is disabled until RENOVATE_ENABLED is set to true with the required GitHub App secrets."
