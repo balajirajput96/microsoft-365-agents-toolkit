@@ -17,7 +17,7 @@ import {
 } from "@microsoft/teamsfx-api";
 import { DotenvParseOutput } from "dotenv";
 import fs from "fs-extra";
-import { glob } from "glob";
+import * as globModule from "glob";
 import * as jsonschema from "jsonschema";
 import { camelCase, merge } from "lodash";
 import { EOL } from "os";
