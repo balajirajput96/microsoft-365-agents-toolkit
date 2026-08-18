@@ -131,7 +131,7 @@ jobs:
           npm run setup
 
       - name: Clean resource
-        if: always()
+        if: ${{ always() && env.CLEAN_TENANT_ID != '' && env.CLEAN_CLIENT_ID != '' && env.CLEAN_CLIENT_SECRET != '' && env.M365_ACCOUNT_PASSWORD != '' }}
         run: |
           npx ts-node src/scripts/clean.ts
 
@@ -141,7 +141,7 @@ jobs:
           echo "M365_ACCOUNT_NAME=$username" >> $GITHUB_ENV
 
       - name: Clean resource 
-        if: always()
+        if: ${{ always() && env.CLEAN_TENANT_ID != '' && env.CLEAN_CLIENT_ID != '' && env.CLEAN_CLIENT_SECRET != '' && env.M365_ACCOUNT_PASSWORD != '' }}
         run: |
           npx ts-node src/scripts/clean.ts
 
@@ -151,7 +151,7 @@ jobs:
           echo "M365_ACCOUNT_NAME=$username" >> $GITHUB_ENV
 
       - name: Clean resource 
-        if: always()
+        if: ${{ always() && env.CLEAN_TENANT_ID != '' && env.CLEAN_CLIENT_ID != '' && env.CLEAN_CLIENT_SECRET != '' && env.M365_ACCOUNT_PASSWORD != '' }}
         run: |
           npx ts-node src/scripts/clean.ts
 
@@ -161,7 +161,7 @@ jobs:
           echo "M365_ACCOUNT_NAME=$username" >> $GITHUB_ENV
 
       - name: Clean resource 
-        if: always()
+        if: ${{ always() && env.CLEAN_TENANT_ID != '' && env.CLEAN_CLIENT_ID != '' && env.CLEAN_CLIENT_SECRET != '' && env.M365_ACCOUNT_PASSWORD != '' }}
         run: |
           npx ts-node src/scripts/clean.ts
 
@@ -171,6 +171,6 @@ jobs:
           echo "M365_ACCOUNT_NAME=$username" >> $GITHUB_ENV
 
       - name: Clean resource 
-        if: always()
+        if: ${{ always() && env.CLEAN_TENANT_ID != '' && env.CLEAN_CLIENT_ID != '' && env.CLEAN_CLIENT_SECRET != '' && env.M365_ACCOUNT_PASSWORD != '' }}
         run: |
           npx ts-node src/scripts/clean.ts
