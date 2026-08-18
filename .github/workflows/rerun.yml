@@ -44,6 +44,7 @@ jobs:
           echo "wait for 60s"
 
       - name: clean devtunnel
+        if: ${{ env.DEVTUNNEL_TENANT_ID != '' && env.DEVTUNNEL_CLIENT_ID != '' && env.DEVTUNNEL_CLIENT_SECRET != '' }}
         run: |
           wget https://tunnelsassetsprod.blob.core.windows.net/cli/1.0.1249+67b1cd300c/linux-x64-devtunnel -O ./devtunnel
           chmod 777 ./devtunnel
