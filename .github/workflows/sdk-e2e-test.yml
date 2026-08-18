@@ -32,21 +32,25 @@ jobs:
         run: |
           pip install yq
 
+      - name: Skip SDK E2E tests without an integration account
+        if: ${{ env.SDK_INTEGRATION_TEST_ACCOUNT == '' }}
+        run: echo 'SDK_INTEGRATION_TEST_ACCOUNT is not configured; SDK E2E tests skipped.' >> "$GITHUB_STEP_SUMMARY"
+
       - name: run test - node
-        if: ${{ always() }}
+        if: ${{ env.SDK_INTEGRATION_TEST_ACCOUNT != '' }}
         working-directory: packages/sdk
         run: |
           npm run test:e2e:node
 
       - name: run test - browser
-        if: ${{ always() }}
+        if: ${{ env.SDK_INTEGRATION_TEST_ACCOUNT != '' }}
         working-directory: packages/sdk
         run: |
           npm run test:e2e:browser
 
       - name: get job id
         id: get-job-id
-        if: ${{ always() }}
+        if: ${{ env.SDK_INTEGRATION_TEST_ACCOUNT != '' }}
         uses: ayachensiyuan/get-action-job-id@v1.5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -54,7 +58,7 @@ jobs:
           job-name: "setup"
 
       - name: List jobs
-        if: ${{ always() }}
+        if: ${{ env.SDK_INTEGRATION_TEST_ACCOUNT != '' }}
         id: list-jobs
         working-directory: packages/sdk
         run: |
@@ -128,7 +132,7 @@ jobs:
           echo "subject=$subject" >> $GITHUB_OUTPUT
 
       - name: Rerun
-        if: ${{ github.event_name == 'schedule' && failure() && github.run_attempt < 5 }}
+        if: ${{ env.SDK_INTEGRATION_TEST_ACCOUNT != '' && github.event_name == 'schedule' && failure() && github.run_attempt < 5 }}
         run: |
           curl \
            -X POST \
@@ -139,7 +143,7 @@ jobs:
            -d '{"ref":"${{ github.ref_name }}","inputs":{"run_id":"${{ github.run_id }}", "max_attempts":"5"}}'
 
       - name: Report result
-        if: ${{ github.event_name == 'schedule' && (success() || (failure() && github.run_attempt >= 5)) }}
+        if: ${{ env.SDK_INTEGRATION_TEST_ACCOUNT != '' && github.event_name == 'schedule' && (success() || (failure() && github.run_attempt >= 5)) }}
         uses: ./.github/actions/send-email-report
         env:
           TO: ${{ steps.list-jobs.outputs.to }}
