@@ -100,6 +100,7 @@ describe("File: codeIssueDetector", () => {
 
       it("normal input should works", async () => {
         const detector = CodeIssueDetector.getInstance();
+        sandbox.stub(utils, "fetchRawFileContent").resolves("declare namespace Office {}");
 
         const result = await callDetectIssueAsync(detector);
         chai.assert.isDefined(result);
