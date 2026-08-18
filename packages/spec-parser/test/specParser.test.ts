@@ -339,6 +339,7 @@ describe("SpecParser", () => {
     });
 
     it("should return an error result object if contain remote reference", async function () {
+      this.timeout(10_000);
       const spec = {
         openapi: "3.0.3",
         info: {

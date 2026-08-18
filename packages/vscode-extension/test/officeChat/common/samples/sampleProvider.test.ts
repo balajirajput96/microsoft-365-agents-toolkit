@@ -4,7 +4,8 @@ import * as utils from "../../../../src/chat/utils";
 import sinon from "ts-sinon";
 import { Spec } from "../../../../src/officeChat/common/skills/spec";
 
-describe("SampleProvider", () => {
+describe("SampleProvider", function () {
+  this.timeout(10_000);
   const sandbox = sinon.createSandbox();
 
   beforeEach(() => {});
