@@ -10,6 +10,8 @@ permissions: read-all
 
 jobs:
   renovate:
+    # Forks must explicitly opt in after configuring their own Renovate GitHub App secrets.
+    if: ${{ vars.RENOVATE_ENABLED == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Get TeamsFx Renovate App Token
