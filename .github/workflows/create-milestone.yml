@@ -6,7 +6,38 @@ on:
   workflow_dispatch:
 
 jobs:
+  preflight:
+    name: Verify milestone Azure prerequisites
+    runs-on: ubuntu-latest
+    outputs:
+      milestone_ready: ${{ steps.verify.outputs.milestone_ready }}
+    env:
+      DEVOPS_CLIENT_ID: ${{ secrets.DEVOPS_CLIENT_ID }}
+      DEVOPS_TENANT_ID: ${{ secrets.DEVOPS_TENANT_ID }}
+      DEVOPS_SUB_ID: ${{ secrets.DEVOPS_SUB_ID }}
+    steps:
+      - id: verify
+        shell: bash
+        run: |
+          set -euo pipefail
+          required=(DEVOPS_CLIENT_ID DEVOPS_TENANT_ID DEVOPS_SUB_ID)
+          missing=()
+          for name in "${required[@]}"; do
+            if [ -z "${!name}" ]; then
+              missing+=("$name")
+            fi
+          done
+          if [ "${#missing[@]}" -eq 0 ]; then
+            echo 'milestone_ready=true' >> "$GITHUB_OUTPUT"
+            echo 'Milestone prerequisites are available.'
+          else
+            echo 'milestone_ready=false' >> "$GITHUB_OUTPUT"
+            echo "Milestone workflow skipped because required Azure settings are unavailable: ${missing[*]}"
+          fi
+
   main:
+    needs: preflight
+    if: ${{ needs.preflight.outputs.milestone_ready == 'true' }}
     runs-on: ubuntu-latest
     environment: engineering
     permissions:
