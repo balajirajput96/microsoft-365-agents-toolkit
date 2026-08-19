@@ -981,16 +981,6 @@ function downloadSampleHook(sampleId: string, sampleAppPath: string): void {
   if (sampleId === "todo-list-SPFx") {
     const originalId = "c314487b-f51c-474d-823e-a2c3ec82b1ff";
     const componentId = uuid.v4();
-    void glob(`${sampleAppPath}/**/*.json`, { nodir: true, dot: true }).then((files) =>
-      Promise.all(
-        files.map(async (file) => {
-          let content = (await fs.readFile(file)).toString();
-          const reg = new RegExp(originalId, "g");
-          content = content.replace(reg, componentId);
-          await fs.writeFile(file, content);
-        })
-      )
-=======
     const globApi = globModule as unknown as {
       globSync?: (pattern: string, options: { nodir: boolean; dot: boolean }) => string[];
       sync?: (pattern: string, options: { nodir: boolean; dot: boolean }) => string[];
@@ -1010,7 +1000,6 @@ function downloadSampleHook(sampleId: string, sampleAppPath: string): void {
         content = content.replace(reg, componentId);
         await fs.writeFile(file, content);
       })
->>>>>>> 93646a6039 (fix: align MCP server with current dependency toolchain)
     );
   }
 }
