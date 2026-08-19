@@ -2289,6 +2289,72 @@ importers:
         specifier: ^8.56.0
         version: 8.56.0(eslint@9.0.0)(typescript@5.9.2)
 
+  templates:
+    devDependencies:
+      adm-zip:
+        specifier: ^0.6.0
+        version: 0.6.0
+      copyfiles:
+        specifier: ^2.4.1
+        version: 2.4.1
+      eslint:
+        specifier: ^9.0.0
+        version: 9.0.0
+      eslint-config-prettier:
+        specifier: ^10.1.0
+        version: 10.1.0(eslint@9.0.0)
+      eslint-plugin-headers:
+        specifier: ^1.3.4
+        version: 1.3.4(eslint@9.0.0)
+      eslint-plugin-import-x:
+        specifier: ^4.16.0
+        version: 4.16.2(eslint@9.0.0)
+      eslint-plugin-no-secrets:
+        specifier: ^1.1.2
+        version: 1.1.2(eslint@9.0.0)
+      eslint-plugin-office-addins:
+        specifier: 3.0.2
+        version: 3.0.2(@eslint/eslintrc@3.3.5)
+      eslint-plugin-prettier:
+        specifier: ^5.5.0
+        version: 5.5.0(eslint-config-prettier@10.1.0)(eslint@9.0.0)(prettier@3.9.4)
+      globals:
+        specifier: ^16.2.0
+        version: 16.2.0
+      js-yaml:
+        specifier: 4.3.0
+        version: ms-feed-25.pkgs.visualstudio.com/js-yaml@4.3.0
+      lint-staged:
+        specifier: ^15.5.2
+        version: 15.5.2
+      mustache:
+        specifier: ^4.2.0
+        version: 4.2.0
+      prettier:
+        specifier: ^3.3.3
+        version: 3.9.4
+      rimraf:
+        specifier: ^6.0.1
+        version: 6.0.1
+      semver:
+        specifier: ^7.3.5
+        version: 7.5.4
+      shx:
+        specifier: ^0.3.4
+        version: 0.3.4
+      tslint:
+        specifier: ^6.1.3
+        version: 6.1.3(typescript@5.9.2)
+      tsx:
+        specifier: ^4.20.6
+        version: 4.20.6
+      typescript:
+        specifier: ~5.9.0
+        version: 5.9.2
+      typescript-eslint:
+        specifier: ^8.56.0
+        version: 8.56.0(eslint@9.0.0)(typescript@5.9.2)
+
 packages:
 
   /@apidevtools/json-schema-ref-parser@11.7.2:
