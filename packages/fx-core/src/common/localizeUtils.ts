@@ -53,7 +53,13 @@ function getLocaleJson(locale?: string): any {
   ) {
     loadTranslationFile(cachedResourcePath, locale);
   } else {
-    loadTranslationFile(path.join(getResourceFolder(), "templates"), locale);
+    const templateResourcePath = path.join(getResourceFolder(), "templates");
+    loadTranslationFile(
+      fs.pathExistsSync(path.join(templateResourcePath, "package.nls.json"))
+        ? templateResourcePath
+        : getResourceFolder(),
+      locale
+    );
   }
   return LocaleStringMap.get(locale);
 }
