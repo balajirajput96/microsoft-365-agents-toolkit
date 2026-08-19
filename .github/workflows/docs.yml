@@ -34,7 +34,10 @@ jobs:
               echo $link "=>" "white list" >> akas.data
               continue
             fi
-            redirect=`curl -LIs -o /dev/null -w %{url_effective} $link`
+            redirect="$(curl --location --head --silent --show-error --connect-timeout 10 --max-time 30 --retry 2 --retry-all-errors -o /dev/null -w '%{url_effective}' "$link" || true)"
+            if [[ -z "$redirect" ]]; then
+              redirect="UNREACHABLE"
+            fi
             echo $link "=>" $redirect >> akas.data
           done <<< $links
 
@@ -74,9 +77,12 @@ jobs:
               elif [[ $redirect == *"white list"* ]];
               then
                 label="SKIPPED"
+              elif [[ $redirect == "UNREACHABLE" ]];
+              then
+                label="INVALID"
               else
-                httpcode=`curl -s -o /dev/null -w %{http_code} $redirect`
-                if [[ $httpcode == 404 ]];
+                httpcode="$(curl --location --silent --connect-timeout 10 --max-time 30 --retry 2 --retry-all-errors -o /dev/null -w '%{http_code}' "$redirect" || true)"
+                if [[ $httpcode == 404 || $httpcode == 000 || -z $httpcode ]];
                 then
                   label="INVALID"
                 else
@@ -132,9 +138,14 @@ jobs:
               then
                 valid=$((valid+1))
                 label="<span style=\\\"background-color:#b58900;color:white;font-weight:bold;\\\">SKIPPED</span>"
+              elif [[ $redirect == "UNREACHABLE" ]];
+              then
+                invalid_url=true
+                invalid=$((invalid+1))
+                label="<span style=\\\"background-color: #dc322f;color:white;font-weight:bold;\\\">INVALID</span>"
               else
-                httpcode=`curl -s -o /dev/null -w %{http_code} $redirect`
-                if [[ $httpcode == 404 ]];
+                httpcode="$(curl --location --silent --connect-timeout 10 --max-time 30 --retry 2 --retry-all-errors -o /dev/null -w '%{http_code}' "$redirect" || true)"
+                if [[ $httpcode == 404 || $httpcode == 000 || -z $httpcode ]];
                 then
                   invalid_url=true
                   invalid=$((invalid+1))
@@ -175,6 +186,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Send E-mail to the whole team
+        if: ${{ false }}
         uses: ./.github/actions/send-email-report
         env:
           TO: ${{ steps.list-akas.outputs.to }}
