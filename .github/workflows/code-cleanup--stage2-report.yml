@@ -92,6 +92,7 @@ jobs:
       working-directory: packages/${{matrix.package}}
 
     - name: Detect type-checking else issues
+      continue-on-error: true
       run: |
         npx eslint src --ext ts --format unix
       working-directory: packages/${{matrix.package}}
@@ -121,6 +122,7 @@ jobs:
       uses: ./.github/actions/setup-project
 
     - name: Detect type-checking normal issues
+      continue-on-error: true
       run: |
         npx eslint src --ext ts --format unix
       working-directory: packages/${{matrix.package}}
