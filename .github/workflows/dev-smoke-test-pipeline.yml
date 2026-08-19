@@ -20,7 +20,29 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  credential-preflight:
+    name: Verify smoke-test credentials
+    runs-on: ubuntu-latest
+    outputs:
+      can_run: ${{ steps.check.outputs.can_run }}
+    steps:
+      - id: check
+        name: Check GitHub App credentials
+        env:
+          APP_GITHUB_APP_ID: ${{ vars.APP_GITHUB_APP_ID }}
+          APP_GITHUB_APP_PRIVATE_KEY: ${{ secrets.APP_GITHUB_APP_PRIVATE_KEY }}
+        run: |
+          if [ -n "$APP_GITHUB_APP_ID" ] && [ -n "$APP_GITHUB_APP_PRIVATE_KEY" ]; then
+            echo "can_run=true" >> "$GITHUB_OUTPUT"
+            echo "GitHub App credentials are available."
+          else
+            echo "can_run=false" >> "$GITHUB_OUTPUT"
+            echo "GitHub App credentials are unavailable; credential-dependent smoke jobs will be skipped."
+          fi
+
   run-cd:
+    needs: credential-preflight
+    if: ${{ needs.credential-preflight.outputs.can_run == 'true' }}
     runs-on: ubuntu-latest
     outputs:
       run_id: ${{ steps.trigger.outputs.run_id }}
@@ -113,7 +135,8 @@ jobs:
             throw new Error('CD pipeline timed out after 2 hours');
 
   run-docker-build:
-    needs: run-cd
+    needs: [credential-preflight, run-cd]
+    if: ${{ needs.credential-preflight.outputs.can_run == 'true' }}
     runs-on: ubuntu-latest
     outputs:
       run_id: ${{ steps.trigger.outputs.run_id }}
@@ -194,7 +217,8 @@ jobs:
             throw new Error('Docker Build pipeline timed out after 2 hours');
 
   run-ui-test:
-    needs: [run-cd, run-docker-build]
+    needs: [credential-preflight, run-cd, run-docker-build]
+    if: ${{ needs.credential-preflight.outputs.can_run == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Generate GitHub App token
