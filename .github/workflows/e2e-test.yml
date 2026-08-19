@@ -48,8 +48,41 @@ permissions:
   issues: write
 
 jobs:
+  preflight:
+    name: Verify E2E prerequisites
+    runs-on: ubuntu-latest
+    outputs:
+      e2e_ready: ${{ steps.verify.outputs.e2e_ready }}
+    env:
+      DEVOPS_CLIENT_ID: ${{ secrets.DEVOPS_CLIENT_ID }}
+      DEVOPS_TENANT_ID: ${{ secrets.DEVOPS_TENANT_ID }}
+      DEVOPS_SUB_ID: ${{ secrets.DEVOPS_SUB_ID }}
+      TEST_USER_NAME: ${{ secrets.TEST_USER_NAME }}
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      TEST_M365_PASSWORD: ${{ secrets.TEST_M365_PASSWORD }}
+    steps:
+      - id: verify
+        shell: bash
+        run: |
+          set -euo pipefail
+          required=(DEVOPS_CLIENT_ID DEVOPS_TENANT_ID DEVOPS_SUB_ID TEST_USER_NAME TEST_USER_PASSWORD TEST_M365_PASSWORD)
+          missing=()
+          for name in "${required[@]}"; do
+            if [ -z "${!name}" ]; then
+              missing+=("$name")
+            fi
+          done
+          if [ "${#missing[@]}" -eq 0 ]; then
+            echo 'e2e_ready=true' >> "$GITHUB_OUTPUT"
+            echo 'E2E prerequisite check passed.'
+          else
+            echo 'e2e_ready=false' >> "$GITHUB_OUTPUT"
+            echo "E2E skipped because required test credentials are unavailable: ${missing[*]}"
+          fi
+
   setup:
-    if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && github.event.inputs.get-coverage == 'false' ) || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == 'OfficeDev/microsoft-365-agents-toolkit') }}
+    needs: preflight
+    if: ${{ needs.preflight.outputs.e2e_ready == 'true' && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && github.event.inputs.get-coverage == 'false' ) || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == 'OfficeDev/microsoft-365-agents-toolkit')) }}
     runs-on: ubuntu-latest
     environment: engineering
     permissions:
