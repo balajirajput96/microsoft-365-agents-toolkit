@@ -14604,6 +14604,27 @@ packages:
       semver: 6.3.1
     dev: true
 
+  /eslint-plugin-office-addins@3.0.2(@eslint/eslintrc@3.3.5):
+    resolution: {integrity: sha512-VxX3juMvfQ7UKKzRvUV1JgopJmZsOa9iWA4Mg3+p+sTIqNmuaYiSgy9AT+MheP4zopWHjvJR4rRfyZWTXtUjeA==}
+    engines: {node: '>=0.10.0'}
+    dependencies:
+      '@typescript-eslint/rule-tester': 7.18.0(@eslint/eslintrc@3.3.5)(eslint@8.57.1)(typescript@5.9.2)
+      eslint: 8.57.1
+      eslint-config-prettier: 9.1.2(eslint@8.57.1)
+      eslint-plugin-prettier: 5.5.0(eslint-config-prettier@9.1.2)(eslint@8.57.1)(prettier@3.9.4)
+      eslint-plugin-react: 7.37.5(eslint@8.57.1)
+      eslint-plugin-react-native: 4.1.0(eslint@8.57.1)
+      office-addin-prettier-config: 1.2.1
+      prettier: 3.9.4
+      requireindex: 1.2.0
+      typescript: 5.9.2
+      typescript-eslint: 7.18.0(eslint@8.57.1)(typescript@5.9.2)
+    transitivePeerDependencies:
+      - '@eslint/eslintrc'
+      - '@types/eslint'
+      - supports-color
+    dev: true
+
   /eslint-plugin-prettier@5.5.0(eslint-config-prettier@10.1.0)(eslint@10.4.1)(prettier@3.9.4):
     resolution: {integrity: sha512-8qsOYwkkGrahrgoUv76NZi23koqXOGiiEzXMrT8Q7VcYaUISR+5MorIUxfWqYXN0fN/31WbSrxCxFkVQ43wwrA==}
     engines: {node: ^14.18.0 || >=16.0.0}
