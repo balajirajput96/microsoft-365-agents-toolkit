@@ -60,8 +60,12 @@ jobs:
 
     - name: Update eslint config
       run: |
-        sed -i 's/shared/promise/g' .eslintrc.js
-        sed -i '/header/d' .eslintrc.js
+        if [ -f .eslintrc.js ]; then
+          sed -i 's/shared/promise/g' .eslintrc.js
+          sed -i '/header/d' .eslintrc.js
+        else
+          echo "No legacy .eslintrc.js found; using the package ESLint flat config."
+        fi
       working-directory: packages/${{matrix.package}}
 
     - name: Detect type-checking promise issues
@@ -87,8 +91,12 @@ jobs:
 
     - name: Update eslint config
       run: |
-        sed -i 's/shared/type/g' .eslintrc.js
-        sed -i '/header/d' .eslintrc.js
+        if [ -f .eslintrc.js ]; then
+          sed -i 's/shared/type/g' .eslintrc.js
+          sed -i '/header/d' .eslintrc.js
+        else
+          echo "No legacy .eslintrc.js found; using the package ESLint flat config."
+        fi
       working-directory: packages/${{matrix.package}}
 
     - name: Detect type-checking else issues
