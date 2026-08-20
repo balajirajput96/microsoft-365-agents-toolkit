@@ -13,7 +13,6 @@ permissions:
   contents: read
   actions: read
   pull-requests: read
-  metadata: read
 
 jobs:
   audit:
