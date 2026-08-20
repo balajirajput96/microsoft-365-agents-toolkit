@@ -80,10 +80,14 @@ export async function hasAnyDotnetVersions(
 export async function cleanup() {
   // fs-extra.remove() does nothing if the file does not exist.
   await fs.remove(dotnetConfigPath);
-  const processes = await find("name", "dotnet", true);
-  processes.forEach((p: { pid: number }, index: number, array: any) =>
-    process.kill(p.pid, "SIGKILL")
-  );
+  try {
+    const processes = await find("name", "dotnet", true);
+    processes.forEach((p: { pid: number }) => process.kill(p.pid, "SIGKILL"));
+  } catch (error) {
+    // find-process 1.x relies on WMIC on Windows, which is unavailable on current
+    // windows-latest runners. Cleanup is best-effort; the test state is removed below.
+    console.warn(`Failed to enumerate dotnet processes during cleanup, error = '${error}'`);
+  }
   await fs.remove(dotnetPrivateInstallPath);
 }
 
