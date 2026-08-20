@@ -1,0 +1,43 @@
+name: Daily Maintenance Audit
+
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: daily-maintenance-audit-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  actions: read
+  pull-requests: read
+  metadata: read
+
+jobs:
+  audit:
+    name: Audit GitHub repository health
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Generate maintenance report
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+        run: bash scripts/maintenance/audit-github-state.sh maintenance-report
+
+      - name: Upload maintenance report
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-maintenance-audit-${{ github.run_id }}
+          path: maintenance-report/
+          if-no-files-found: error
+          retention-days: 30
