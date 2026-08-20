@@ -90,6 +90,7 @@ jq -n \
   > "$state_file"
 
 persisted="not_requested"
+state_source="${M365_STATE_SOURCE:-none}"
 if [ "${PERSIST_STATE:-0}" = "1" ] && [ "$completion_status" != "complete" ]; then
   compact_state="$(jq -c '{execution_number,cycle_limit,timestamp,repository,branch,head,status,failure_category,remaining_blocker,next_action,summary}' "$state_file")"
   if gh api --method PUT "repos/$repo/actions/variables/M365_HOURLY_STATE" \
@@ -100,7 +101,11 @@ if [ "${PERSIST_STATE:-0}" = "1" ] && [ "$completion_status" != "complete" ]; th
       -f "name=M365_HOURLY_STATE" -f "value=$compact_state" >/dev/null 2>&1; then
     persisted="repository_variable"
   else
-    persisted="artifact_only_persistence_failed"
+    if [ "$state_source" = "artifact" ]; then
+      persisted="artifact_fallback"
+    else
+      persisted="artifact_only_persistence_failed"
+    fi
   fi
 fi
 if [ "$persisted" = "artifact_only_persistence_failed" ]; then
@@ -121,6 +126,7 @@ mv "$state_file.tmp" "$state_file"
   echo "- **Repository:** [$repo](https://github.com/$repo)"
   echo "- **Branch:** \`$branch\`"
   echo "- **Audited commit:** \`$sha\`"
+  echo "- **State source:** $state_source"
   echo "- **State persistence:** $persisted"
   echo
   echo "> This continuation is bounded and read-only with respect to repository history: it does not merge, deploy, force-push, bypass authentication, or record secrets. Source repairs require a separate reviewable branch and pull request."
