@@ -13,7 +13,7 @@ describe("CLI Telemetry", function () {
 
   beforeEach(() => {
     vi.spyOn(process.stderr, "write").mockImplementation(((chunk: any, ...args: any[]) => {
-      const text = typeof chunk === "string" ? chunk : chunk?.toString?.() ?? "";
+      const text = typeof chunk === "string" ? chunk : (chunk?.toString?.() ?? "");
       if (text.includes("ApplicationInsights:An invalid instrumentation key was provided.")) {
         return true;
       }

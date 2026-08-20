@@ -441,7 +441,7 @@ export default class PreviewEnv {
     return (await tools.getSideloadingStatus(token)) ?? false;
   }
 
-  protected async loadTeamsFxDevScript(projectPath: string): Promise<string | undefined> {
+  protected loadTeamsFxDevScript(projectPath: string): Promise<string | undefined> {
     return packageJson.loadTeamsFxDevScript(projectPath);
   }
 
