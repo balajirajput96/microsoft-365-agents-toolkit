@@ -33,11 +33,30 @@ jobs:
         run: |
           set -euo pipefail
           state="$(gh api "repos/$GITHUB_REPOSITORY/actions/variables/M365_HOURLY_STATE" --jq '.value' 2>/dev/null || true)"
+          state_source="repository_variable"
+          if [ -z "$state" ]; then
+            artifact_meta="$(gh api "repos/$GITHUB_REPOSITORY/actions/artifacts" --paginate --jq '.artifacts[] | select(.expired == false) | select(.name | startswith("hourly-engineering-continuation-")) | [.workflow_run.id,.name,.created_at] | @tsv' 2>/dev/null | sort -k3,3r | head -1 || true)"
+            artifact_run_id="$(cut -f1 <<<"$artifact_meta")"
+            artifact_name="$(cut -f2 <<<"$artifact_meta")"
+            if [ -n "$artifact_run_id" ] && [ -n "$artifact_name" ]; then
+              rm -rf "$RUNNER_TEMP/hourly-previous-state"
+              mkdir -p "$RUNNER_TEMP/hourly-previous-state"
+              if gh run download "$artifact_run_id" --repo "$GITHUB_REPOSITORY" --name "$artifact_name" --dir "$RUNNER_TEMP/hourly-previous-state" >/dev/null 2>&1; then
+                artifact_state="$(find "$RUNNER_TEMP/hourly-previous-state" -type f -name 'hourly-continuation-state.json' -print -quit)"
+                if [ -n "$artifact_state" ] && jq -e . "$artifact_state" >/dev/null 2>&1; then
+                  state="$(cat "$artifact_state")"
+                  state_source="artifact"
+                fi
+              fi
+            fi
+          fi
           {
             echo 'M365_HOURLY_STATE<<M365_HOURLY_STATE_EOF'
             printf '%s\n' "$state"
             echo 'M365_HOURLY_STATE_EOF'
           } >> "$GITHUB_ENV"
+          echo "M365_STATE_SOURCE=$state_source" >> "$GITHUB_ENV"
+          echo "state_source=$state_source" >> "$GITHUB_OUTPUT"
           if [ -n "$state" ]; then
             echo "state_found=true" >> "$GITHUB_OUTPUT"
           else
