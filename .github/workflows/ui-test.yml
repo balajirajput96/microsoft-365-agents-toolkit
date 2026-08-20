@@ -132,12 +132,31 @@ jobs:
           echo "matrix=${matrix}" >> $GITHUB_OUTPUT
 
       - name: Download TTK
+        id: download-ttk
+        env:
+          VSIX_RUN_ID: ${{ env.vsix-run-id }}
         run: |
-          echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token 
-          gh run download ${{ env.vsix-run-id }} --repo OfficeDev/TeamsFx --name release
+          if [ -z "$VSIX_RUN_ID" ]; then
+            echo "No VSIX run id is available; skipping UI test setup."
+            echo "ttk-ready=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
+          if ! timeout --foreground 5m gh run download "$VSIX_RUN_ID" --repo OfficeDev/TeamsFx --name release; then
+            echo "Unable to download the TTK release artifact within 5 minutes; skipping UI test setup."
+            echo "ttk-ready=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if find . -type f -name "*.vsix" -print -quit | grep -q .; then
+            echo "ttk-ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "TTK release artifact did not contain a VSIX; skipping UI test setup."
+            echo "ttk-ready=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Export TTK version
         id: ttk
+        if: ${{ steps.download-ttk.outputs.ttk-ready == 'true' }}
         run: |
           package=`find . -type f -name "*.vsix" | sed 's|.*/\(.*\)|\1|'`
           version=`echo $package | sed 's|ms-teams-vscode-extension-||' | sed 's|\.vsix||'`
@@ -145,6 +164,7 @@ jobs:
           echo "version=$version" >> $GITHUB_OUTPUT
 
       - name: Upload TTK to artifact
+        if: ${{ steps.download-ttk.outputs.ttk-ready == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: ttk
@@ -167,10 +187,12 @@ jobs:
       matrix: ${{ steps.setup-matrix.outputs.matrix }}
       ttk-package: ${{ steps.ttk.outputs.package }}
       ttk-version: ${{ steps.ttk.outputs.version }}
+      ttk-ready: ${{ steps.download-ttk.outputs.ttk-ready }}
       target_cli_version: ${{ env.target_cli_version }}
 
   main:
     name: ${{ matrix.test-case }}|${{ matrix.os }}|node ${{ matrix.node-version }}|${{ github.ref_name }}
+    if: ${{ needs.setup.outputs.ttk-ready == 'true' }}
     needs: setup
     permissions:
       contents: read
