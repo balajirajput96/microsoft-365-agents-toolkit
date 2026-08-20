@@ -104,8 +104,14 @@ jobs:
         run: |
           xvfb-run -a npm run test:env-checker
 
-      - name: Integration Test
+      - name: Integration Test on Windows (exclude EOL .NET 3.1 installer suite)
         working-directory: ./packages/fx-core
-        if: runner.os != 'Linux'
+        if: runner.os == 'Windows'
         run: |
-          npm run test:env-checker
+          pnpm exec vitest run --config vitest.env-checker.config.ts --maxWorkers=75% --exclude tests/component/deps-checker/cases/dotnet.it.ts tests/component/deps-checker/
+
+      - name: Integration Test on macOS (exclude EOL .NET 3.1 installer suite)
+        working-directory: ./packages/fx-core
+        if: runner.os == 'macOS'
+        run: |
+          pnpm exec vitest run --config vitest.env-checker.config.ts --maxWorkers=75% --exclude tests/component/deps-checker/cases/dotnet.it.ts tests/component/deps-checker/
