@@ -103,6 +103,13 @@ if [ "${PERSIST_STATE:-0}" = "1" ] && [ "$completion_status" != "complete" ]; th
     persisted="artifact_only_persistence_failed"
   fi
 fi
+if [ "$persisted" = "artifact_only_persistence_failed" ]; then
+  failure_category="state_persistence_failure"
+  remaining_blocker="The scheduled runner could not update the compact repository state variable; the artifact remains the recoverable record."
+  next_action="Verify Actions variable write permission and retry state persistence on the next bounded run."
+  jq --arg failure_category "$failure_category" --arg remaining_blocker "$remaining_blocker" --arg next_action "$next_action" '. + {failure_category:$failure_category,remaining_blocker:$remaining_blocker,next_action:$next_action}' "$state_file" > "$state_file.tmp"
+  mv "$state_file.tmp" "$state_file"
+fi
 jq --arg persisted "$persisted" '. + {state_persistence:$persisted}' "$state_file" > "$state_file.tmp"
 mv "$state_file.tmp" "$state_file"
 
