@@ -79,7 +79,7 @@ jobs:
           fetch-depth: 0
 
       - name: Checkout release schedule repo
-        if: ${{ env.LOCAL_SCHEDULE_FILE == '' }}
+        if: ${{ env.LOCAL_SCHEDULE_FILE == '' && env.APP_GITHUB_APP_ID != '' && env.APP_GITHUB_APP_PRIVATE_KEY != '' }}
         uses: actions/checkout@v3
         with:
           repository: ${{ env.SCHEDULE_REPO }}
@@ -97,6 +97,13 @@ jobs:
       - name: Parse release schedule
         id: parse
         run: |
+          if [ -z "${{ env.LOCAL_SCHEDULE_FILE }}" ] && { [ -z "${{ env.APP_GITHUB_APP_ID }}" ] || [ -z "${{ env.APP_GITHUB_APP_PRIVATE_KEY }}" ]; }; then
+            echo "Release schedule repository credentials are unavailable; skipping scheduled release processing."
+            echo 'releases=[]' >> "$GITHUB_OUTPUT"
+            echo 'releases_count=0' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
           # Determine which schedule file to use
           if [ -n "${{ env.LOCAL_SCHEDULE_FILE }}" ]; then
             SCHEDULE_PATH="${{ env.LOCAL_SCHEDULE_FILE }}"
