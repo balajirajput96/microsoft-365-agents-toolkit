@@ -73,6 +73,16 @@ jobs:
         run: |
           echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
 
+      - name: Dev tunnel credential preflight
+        id: devtunnel-preflight
+        run: |
+          if [ -n "$DEVTUNNEL_TENANT_ID" ] && [ -n "$DEVTUNNEL_CLIENT_ID" ] && [ -n "$DEVTUNNEL_CLIENT_SECRET" ]; then
+            echo "devtunnel-ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Dev tunnel service-principal credentials are unavailable; skipping dependent UI setup."
+            echo "devtunnel-ready=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: bvt (dispatch)
         id: bvt
         if: ${{ github.event_name == 'workflow_dispatch' }}
@@ -172,6 +182,7 @@ jobs:
             ./${{ steps.ttk.outputs.package }}
 
       - name: clean devtunnel
+        if: ${{ steps.devtunnel-preflight.outputs.devtunnel-ready == 'true' }}
         run: |
           wget https://tunnelsassetsprod.blob.core.windows.net/cli/1.0.1249+67b1cd300c/linux-x64-devtunnel -O ./devtunnel
           chmod 777 ./devtunnel
@@ -188,11 +199,12 @@ jobs:
       ttk-package: ${{ steps.ttk.outputs.package }}
       ttk-version: ${{ steps.ttk.outputs.version }}
       ttk-ready: ${{ steps.download-ttk.outputs.ttk-ready }}
+      devtunnel-ready: ${{ steps.devtunnel-preflight.outputs.devtunnel-ready }}
       target_cli_version: ${{ env.target_cli_version }}
 
   main:
     name: ${{ matrix.test-case }}|${{ matrix.os }}|node ${{ matrix.node-version }}|${{ github.ref_name }}
-    if: ${{ needs.setup.outputs.ttk-ready == 'true' }}
+    if: ${{ needs.setup.outputs.ttk-ready == 'true' && needs.setup.outputs.devtunnel-ready == 'true' }}
     needs: setup
     permissions:
       contents: read

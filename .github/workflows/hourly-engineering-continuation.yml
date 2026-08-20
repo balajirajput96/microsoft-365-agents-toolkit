@@ -1,0 +1,62 @@
+name: Hourly Engineering Continuation
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: hourly-engineering-continuation-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: write
+  pull-requests: read
+
+jobs:
+  continuation:
+    name: Load state, audit, and save continuation record
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Load previous continuation state
+        id: load-state
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          state="$(gh api "repos/$GITHUB_REPOSITORY/actions/variables/M365_HOURLY_STATE" --jq '.value' 2>/dev/null || true)"
+          {
+            echo 'M365_HOURLY_STATE<<M365_HOURLY_STATE_EOF'
+            printf '%s\n' "$state"
+            echo 'M365_HOURLY_STATE_EOF'
+          } >> "$GITHUB_ENV"
+          if [ -n "$state" ]; then
+            echo "state_found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "state_found=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Execute bounded continuation audit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          PERSIST_STATE: "1"
+        run: bash scripts/maintenance/hourly-continuation.sh continuation-report
+
+      - name: Upload continuation record
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: hourly-engineering-continuation-${{ github.run_id }}
+          path: continuation-report/
+          if-no-files-found: error
+          retention-days: 90
