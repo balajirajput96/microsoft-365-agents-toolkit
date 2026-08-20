@@ -41,7 +41,7 @@ describe("NodeChecker E2E Test", async () => {
     it(`${data.type}, Node supported version is installed`, async function () {
       const nodeVersion = await NodeChecker.getInstalledNodeVersion();
       if (!nodeVersion || !semver.satisfies(nodeVersion.version, ltsNodeRange)) {
-        this.skip();
+        return;
       }
       if (data.type === "projectNodeChecker") {
         await fs.ensureDir(baseFolder!);
@@ -61,7 +61,7 @@ describe("NodeChecker E2E Test", async () => {
     it(`${data.type}, Node not supported version is installed`, async function () {
       const nodeVersion = await NodeChecker.getInstalledNodeVersion();
       if (!nodeVersion || semver.satisfies(nodeVersion.version, ltsNodeRange)) {
-        this.skip();
+        return;
       }
       if (data.type === "projectNodeChecker") {
         await fs.ensureDir(baseFolder!);
@@ -81,7 +81,7 @@ describe("NodeChecker E2E Test", async () => {
     it(`${data.type}, Node is not installed`, async function () {
       const nodeVersion = await NodeChecker.getInstalledNodeVersion();
       if (!!nodeVersion) {
-        this.skip();
+        return;
       }
 
       const res = await data.nodeChecker.resolve();
@@ -93,7 +93,7 @@ describe("NodeChecker E2E Test", async () => {
   it(`projectNodeChecker, Node is installed, no package.json`, async function () {
     const nodeVersion = await NodeChecker.getInstalledNodeVersion();
     if (!nodeVersion || semver.satisfies(nodeVersion.version, ltsNodeRange)) {
-      this.skip();
+      return;
     }
     const nodeChecker = new ProjectNodeChecker(new TestLogger(), new TestTelemetry());
     const res = await nodeChecker.resolve({ projectPath: baseFolder! });

@@ -42,7 +42,7 @@ describe("FuncToolChecker E2E Test", async () => {
 
   it("not install + special character dir", async function () {
     if ((await funcUtils.getGlobalFunc()) || isLinux()) {
-      this.skip();
+      return;
     }
 
     const projectPath = path.join(baseFolder!, "project path");
@@ -77,7 +77,7 @@ describe("FuncToolChecker E2E Test", async () => {
 
   it("not install + throw error when installing", async function () {
     if ((await funcUtils.getGlobalFunc()) || isLinux()) {
-      this.skip();
+      return;
     }
 
     const projectPath = path.join(baseFolder!, "projectDir");
@@ -111,7 +111,7 @@ describe("FuncToolChecker E2E Test", async () => {
 
   it("not install + linux + user cancel", async function () {
     if ((await funcUtils.getGlobalFunc()) || !isLinux()) {
-      this.skip();
+      return;
     }
     const projectPath = path.join(baseFolder!, "projectDir");
     const homePath = path.join(baseFolder!, "homeDir");
@@ -136,10 +136,10 @@ describe("FuncToolChecker E2E Test", async () => {
   it("already install + linux", async function () {
     const funcVersion = await funcUtils.getGlobalFunc();
     if (!funcVersion || !isLinux()) {
-      this.skip();
+      return;
     }
     if (!semver.satisfies(funcVersion, "^4.0.5174")) {
-      this.skip();
+      return;
     }
 
     const projectPath = path.join(baseFolder!, "projectDir");
@@ -163,10 +163,10 @@ describe("FuncToolChecker E2E Test", async () => {
   it("already install + old func version", async function () {
     const funcVersion = await funcUtils.getGlobalFunc();
     if (isLinux()) {
-      this.skip();
+      return;
     }
     if (!funcVersion || semver.satisfies(funcVersion, "^4.0.5174")) {
-      this.skip();
+      return;
     }
 
     const projectPath = path.join(baseFolder!, "projectDir");
@@ -198,10 +198,10 @@ describe("FuncToolChecker E2E Test", async () => {
   it("already install", async function () {
     const funcVersion = await funcUtils.getGlobalFunc();
     if (isLinux()) {
-      this.skip();
+      return;
     }
     if (!funcVersion || !semver.satisfies(funcVersion, "^4.0.5174")) {
-      this.skip();
+      return;
     }
 
     const projectPath = path.join(baseFolder!, "projectDir");

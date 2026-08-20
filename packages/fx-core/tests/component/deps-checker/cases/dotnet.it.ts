@@ -38,7 +38,7 @@ describe("DotnetChecker E2E Test - first run", async () => {
 
   it(".NET SDK is not installed, whether globally or in home dir", async function () {
     if (isLinux() || (await commandExistsInPath(dotnetUtils.dotnetCommand))) {
-      this.skip();
+      return;
     }
     const dotnetChecker = CheckerFactory.createChecker(
       DepsType.Dotnet,
@@ -60,7 +60,7 @@ describe("DotnetChecker E2E Test - first run", async () => {
 
   it(".NET SDK is not installed and the user homedir contains special characters", async function () {
     if (isLinux() || (await commandExistsInPath(dotnetUtils.dotnetCommand))) {
-      this.skip();
+      return;
     }
 
     // test for space and non-ASCII characters
@@ -91,7 +91,7 @@ describe("DotnetChecker E2E Test - first run", async () => {
         dotnetUtils.dotnetSupportedVersions
       ))
     ) {
-      this.skip();
+      return;
     }
 
     const dotnetFullPath = await commandExistsInPath(dotnetUtils.dotnetCommand);
@@ -131,10 +131,10 @@ describe("DotnetChecker E2E Test - first run", async () => {
       dotnetUtils.dotnetSupportedVersions
     );
     if (!(has21 && !hasSupported)) {
-      this.skip();
+      return;
     }
     if (isLinux()) {
-      this.skip();
+      return;
     }
 
     assert.isTrue(await commandExistsInPath(dotnetUtils.dotnetCommand));
@@ -155,7 +155,7 @@ describe("DotnetChecker E2E Test - first run", async () => {
 
   it(".NET SDK installation failure and manually install", async function () {
     if (isLinux() || (await commandExistsInPath(dotnetUtils.dotnetCommand))) {
-      this.skip();
+      return;
     }
 
     // DotnetChecker with mock dotnet-install script
@@ -218,8 +218,8 @@ describe("DotnetChecker E2E Test - second run", () => {
   });
 
   it("Valid dotnet.json file", async function () {
-    if (await commandExistsInPath(dotnetUtils.dotnetCommand)) {
-      this.skip();
+    if (isLinux() || (await commandExistsInPath(dotnetUtils.dotnetCommand))) {
+      return;
     }
 
     const dotnetChecker = CheckerFactory.createChecker(
@@ -269,7 +269,7 @@ describe("DotnetChecker E2E Test - second run", () => {
 
   it("Invalid dotnet.json file and .NET SDK not installed", async function () {
     if (isLinux() || (await commandExistsInPath(dotnetUtils.dotnetCommand))) {
-      this.skip();
+      return;
     }
 
     // setup config file
@@ -300,7 +300,7 @@ describe("DotnetChecker E2E Test - second run", () => {
 
   it("Invalid dotnet.json file and .NET SDK installed", async function () {
     if (isLinux() || (await commandExistsInPath(dotnetUtils.dotnetCommand))) {
-      this.skip();
+      return;
     }
 
     const dotnetChecker = CheckerFactory.createChecker(
