@@ -37,8 +37,40 @@ permissions:
   issues: write
 
 jobs:
+  credential-preflight:
+    runs-on: ubuntu-latest
+    outputs:
+      can_run: ${{ steps.check.outputs.can_run }}
+    steps:
+      - id: check
+        name: Check same-tenant E2E credentials
+        env:
+          DEVOPS_CLIENT_ID: ${{ secrets.DEVOPS_CLIENT_ID }}
+          DEVOPS_TENANT_ID: ${{ secrets.DEVOPS_TENANT_ID }}
+          DEVOPS_SUB_ID: ${{ secrets.DEVOPS_SUB_ID }}
+          E2E_ACCOUNT_NAME: ${{ vars.TEST_E2E_ACCOUNT_NAME }}
+          E2E_ACCOUNT_PASSWORD: ${{ secrets.TEST_E2E_ACCOUNT_PASSWORD }}
+          E2E_SUBSCRIPTION_ID: ${{ vars.TEST_E2E_SUBSCRIPTION_ID }}
+          E2E_TENANT_ID: ${{ vars.TEST_TENANT_CLEAN_TENANT_ID }}
+        run: |
+          missing=0
+          for name in DEVOPS_CLIENT_ID DEVOPS_TENANT_ID DEVOPS_SUB_ID E2E_ACCOUNT_NAME E2E_ACCOUNT_PASSWORD E2E_SUBSCRIPTION_ID E2E_TENANT_ID; do
+            if [ -z "${!name}" ]; then
+              echo "Missing required same-tenant E2E value: $name"
+              missing=1
+            fi
+          done
+          if [ "$missing" -eq 0 ]; then
+            echo "can_run=true" >> "$GITHUB_OUTPUT"
+            echo "Same-tenant E2E credentials are available."
+          else
+            echo "can_run=false" >> "$GITHUB_OUTPUT"
+            echo "Same-tenant E2E credentials are unavailable; credential-dependent jobs will be skipped."
+          fi
+
   setup:
-    if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == 'OfficeDev/microsoft-365-agents-toolkit') }}
+    needs: credential-preflight
+    if: ${{ needs.credential-preflight.outputs.can_run == 'true' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == 'OfficeDev/microsoft-365-agents-toolkit')) }}
     runs-on: ubuntu-latest
     environment: engineering
     permissions:
