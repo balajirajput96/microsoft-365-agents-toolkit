@@ -1,7 +1,10 @@
+import { createRequire } from "node:module";
 import json from "@rollup/plugin-json";
 import typescriptPlugin from "rollup-plugin-typescript2";
 import typescript from "typescript";
-import pkg from "./package.json";
+
+const require = createRequire(import.meta.url);
+const pkg = require("./package.json");
 
 const deps = Object.keys(Object.assign({}, pkg.peerDependencies, pkg.dependencies));
 
