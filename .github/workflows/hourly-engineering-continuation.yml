@@ -32,25 +32,50 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
           set -euo pipefail
-          state="$(gh api "repos/$GITHUB_REPOSITORY/actions/variables/M365_HOURLY_STATE" --jq '.value' 2>/dev/null || true)"
-          if [ "$state" = "null" ]; then
-            state=""
+          state=""
+          state_source="empty"
+          variable_error="$RUNNER_TEMP/hourly-state-variable-error.log"
+          if variable_value="$(GH_FORCE_TTY=0 NO_COLOR=1 CLICOLOR=0 GH_PAGER=cat gh api "repos/$GITHUB_REPOSITORY/actions/variables/M365_HOURLY_STATE" --jq '.value // empty' 2>"$variable_error")"; then
+            if [ -n "$variable_value" ]; then
+              state="$variable_value"
+              state_source="repository_variable"
+            fi
+          else
+            variable_exit=$?
+            variable_bytes="$(wc -c < "$variable_error" | tr -d ' ')"
+            echo "::warning::Continuation state variable lookup failed (exit=$variable_exit, stderr_bytes=$variable_bytes); trying artifact recovery."
           fi
-          state_source="repository_variable"
           if [ -z "$state" ]; then
-            artifact_meta="$(gh api "repos/$GITHUB_REPOSITORY/actions/artifacts" --paginate --jq '.artifacts[] | select(.expired == false) | select(.name | startswith("hourly-engineering-continuation-")) | [.workflow_run.id,.name,.created_at] | @tsv' 2>/dev/null | sort -k3,3r | head -1 || true)"
+            artifact_error="$RUNNER_TEMP/hourly-state-artifact-error.log"
+            if artifact_meta="$(GH_FORCE_TTY=0 NO_COLOR=1 CLICOLOR=0 GH_PAGER=cat gh api "repos/$GITHUB_REPOSITORY/actions/artifacts?per_page=100" --paginate --jq '.artifacts[] | select(.expired == false) | select(.name | startswith("hourly-engineering-continuation-")) | [.workflow_run.id,.name,.created_at] | @tsv' 2>"$artifact_error")"; then
+              artifact_meta="$(sort -k3,3r <<<"$artifact_meta" | head -1)"
+            else
+              artifact_exit=$?
+              artifact_bytes="$(wc -c < "$artifact_error" | tr -d ' ')"
+              echo "::warning::Continuation artifact listing failed (exit=$artifact_exit, stderr_bytes=$artifact_bytes); starting with empty state."
+              artifact_meta=""
+            fi
             artifact_run_id="$(cut -f1 <<<"$artifact_meta")"
             artifact_name="$(cut -f2 <<<"$artifact_meta")"
             if [ -n "$artifact_run_id" ] && [ -n "$artifact_name" ]; then
               rm -rf "$RUNNER_TEMP/hourly-previous-state"
               mkdir -p "$RUNNER_TEMP/hourly-previous-state"
-              if gh run download "$artifact_run_id" --repo "$GITHUB_REPOSITORY" --name "$artifact_name" --dir "$RUNNER_TEMP/hourly-previous-state" >/dev/null 2>&1; then
+              download_error="$RUNNER_TEMP/hourly-state-download-error.log"
+              if GH_FORCE_TTY=0 NO_COLOR=1 CLICOLOR=0 GH_PAGER=cat gh run download "$artifact_run_id" --repo "$GITHUB_REPOSITORY" --name "$artifact_name" --dir "$RUNNER_TEMP/hourly-previous-state" >"$download_error" 2>&1; then
                 artifact_state="$(find "$RUNNER_TEMP/hourly-previous-state" -type f -name 'hourly-continuation-state.json' -print -quit)"
                 if [ -n "$artifact_state" ] && jq -e . "$artifact_state" >/dev/null 2>&1; then
                   state="$(cat "$artifact_state")"
                   state_source="artifact"
+                else
+                  echo "::warning::Continuation artifact downloaded but did not contain a valid state JSON."
                 fi
+              else
+                download_exit=$?
+                download_bytes="$(wc -c < "$download_error" | tr -d ' ')"
+                echo "::warning::Continuation artifact download failed (exit=$download_exit, stderr_bytes=$download_bytes)."
               fi
+            else
+              echo "::notice::No recoverable continuation artifact was found; starting with empty state."
             fi
           fi
           {
