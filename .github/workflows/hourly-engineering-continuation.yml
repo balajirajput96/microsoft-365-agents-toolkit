@@ -33,6 +33,9 @@ jobs:
         run: |
           set -euo pipefail
           state="$(gh api "repos/$GITHUB_REPOSITORY/actions/variables/M365_HOURLY_STATE" --jq '.value' 2>/dev/null || true)"
+          if [ "$state" = "null" ]; then
+            state=""
+          fi
           state_source="repository_variable"
           if [ -z "$state" ]; then
             artifact_meta="$(gh api "repos/$GITHUB_REPOSITORY/actions/artifacts" --paginate --jq '.artifacts[] | select(.expired == false) | select(.name | startswith("hourly-engineering-continuation-")) | [.workflow_run.id,.name,.created_at] | @tsv' 2>/dev/null | sort -k3,3r | head -1 || true)"
