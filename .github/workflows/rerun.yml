@@ -99,6 +99,7 @@ jobs:
     if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && github.event.inputs.clean_up == 'true') }}
     outputs:
       matrix: ${{ steps.build-matrix.outputs.matrix }}
+      has_users: ${{ steps.build-matrix.outputs.has_users }}
     steps:
       - name: Build matrix from M365_USERNAMES variable
         id: build-matrix
@@ -119,11 +120,16 @@ jobs:
           done
           matrix_json="{\"m365_user\": $matrix}"
           echo "matrix=$matrix_json" >> $GITHUB_OUTPUT
+          if [ "$matrix" = "[]" ]; then
+            echo "has_users=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_users=true" >> $GITHUB_OUTPUT
+          fi
   clean:
     name: Clean resource
     needs: build-clean-matrix
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && github.event.inputs.clean_up == 'true') }}
+    if: ${{ needs.build-clean-matrix.outputs.has_users == 'true' && (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && github.event.inputs.clean_up == 'true')) }}
     defaults:
       run:
         working-directory: packages/tests
