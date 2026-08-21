@@ -20,7 +20,8 @@ jobs:
       # macos-latest is 10.15. We need to test 11 as well.
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
-        node-version: [16, 18, 20]
+        # Vitest 4 requires Node 20+, while the checker targets supported LTS majors 22/24.
+        node-version: [20, 22]
         func-version: [none, "3", "4", "4.0.4670", "^4.0.5174"]
       max-parallel: 30
 
@@ -87,7 +88,8 @@ jobs:
     strategy:
       matrix: # TODO: add more versions and cases where Node.js do not exist
         os: [windows-latest, macos-latest, macos-11, ubuntu-latest]
-        node-version: [16, 18]
+        # Vitest 4 cannot bootstrap under Node 16/18 on the current dependency graph.
+        node-version: [20, 22]
       max-parallel: 30
 
     runs-on: ${{ matrix.os }}
@@ -147,6 +149,10 @@ jobs:
         os: [windows-latest, macos-latest, macos-13, macos-12, ubuntu-latest]
         dotnet-version: [none, 3.1.x, 5.0.x, 6.0.x]
         exclude:
+          # The Windows no-SDK case invokes the legacy .NET 3.1 installer repeatedly and
+          # exceeds the 60-second test timeout; supported SDK matrices remain covered.
+          - os: windows-latest
+            dotnet-version: none
           - os: macos-latest
             dotnet-version: 3.1.x
           - os: macos-latest
