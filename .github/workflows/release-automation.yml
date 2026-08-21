@@ -99,6 +99,7 @@ jobs:
         run: |
           if [ -z "${{ env.LOCAL_SCHEDULE_FILE }}" ] && { [ -z "${{ env.APP_GITHUB_APP_ID }}" ] || [ -z "${{ env.APP_GITHUB_APP_PRIVATE_KEY }}" ]; }; then
             echo "Release schedule repository credentials are unavailable; skipping scheduled release processing."
+            printf '[]\n' > releases.json
             echo 'releases=[]' >> "$GITHUB_OUTPUT"
             echo 'releases_count=0' >> "$GITHUB_OUTPUT"
             exit 0
