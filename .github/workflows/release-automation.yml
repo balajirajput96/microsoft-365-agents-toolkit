@@ -895,6 +895,9 @@ jobs:
         uses: ./.github/actions/send-email-report
 
   trigger-cd-dev:
+    permissions:
+      actions: write
+      contents: read
     needs: select-release
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'schedule' && needs.select-release.outputs.found == 'false' }}
@@ -938,6 +941,9 @@ jobs:
               .write();
 
   trigger-cd:
+    permissions:
+      actions: write
+      contents: read
     needs: prepare-release
     runs-on: ubuntu-latest
     if: ${{ github.event_name != 'pull_request' && needs.prepare-release.result == 'success' && ((github.event_name == 'workflow_dispatch' && github.event.inputs.dry_run == 'false' && (github.event.inputs.rerun_cd_only == 'true' || needs.prepare-release.outputs.auto_cd == 'true')) || (github.event_name == 'schedule' && needs.prepare-release.outputs.auto_cd == 'true')) }}
@@ -1006,6 +1012,9 @@ jobs:
               .write();
 
   trigger-cd-on-pr-merge:
+    permissions:
+      actions: write
+      contents: read
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true && (github.event.pull_request.head.ref == 'dev' || startsWith(github.event.pull_request.head.ref, 'chore/bump-version-')) && startsWith(github.event.pull_request.base.ref, 'release/') && contains(github.event.pull_request.labels.*.name, 'release-automation-sync') }}
     outputs:
