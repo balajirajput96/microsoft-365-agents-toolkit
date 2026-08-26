@@ -98,7 +98,9 @@ jobs:
           NPM_CONFIG_USERCONFIG: ${{ runner.temp }}/npm-publicrc
         run: |
           printf '%s\n' 'registry=https://registry.npmjs.org/' 'always-auth=false' > "$NPM_CONFIG_USERCONFIG"
-          sudo env NPM_CONFIG_USERCONFIG="$NPM_CONFIG_USERCONFIG" npm_config_userconfig="$NPM_CONFIG_USERCONFIG" NPM_CONFIG_GLOBALCONFIG=/dev/null npm_config_globalconfig=/dev/null npm_config_registry=https://registry.npmjs.org/ npm_config_always_auth=false npm install --userconfig "$NPM_CONFIG_USERCONFIG" --registry https://registry.npmjs.org/ --always-auth=false --unsafe-perm -g azure-functions-core-tools@${{ matrix.func-version }}
+          FUNC_TOOLS_PREFIX="$RUNNER_TEMP/func-tools"
+          env -u NODE_AUTH_TOKEN -u NPM_TOKEN NPM_CONFIG_USERCONFIG="$NPM_CONFIG_USERCONFIG" npm_config_userconfig="$NPM_CONFIG_USERCONFIG" NPM_CONFIG_GLOBALCONFIG=/dev/null npm_config_globalconfig=/dev/null npm_config_registry=https://registry.npmjs.org/ npm_config_always_auth=false npm install --userconfig "$NPM_CONFIG_USERCONFIG" --globalconfig /dev/null --registry https://registry.npmjs.org/ --always-auth=false --unsafe-perm --prefix "$FUNC_TOOLS_PREFIX" azure-functions-core-tools@${{ matrix.func-version }}
+          printf '%s\n' "$FUNC_TOOLS_PREFIX/bin" "$FUNC_TOOLS_PREFIX/node_modules/.bin" >> "$GITHUB_PATH"
 
       - name: Setup Azure Functions Core Tools For Windows and macOS
         if: ${{ runner.os != 'Linux' && matrix.func-version != 'none' }}
@@ -107,7 +109,9 @@ jobs:
           NPM_CONFIG_USERCONFIG: ${{ runner.temp }}/npm-publicrc
         run: |
           printf '%s\n' 'registry=https://registry.npmjs.org/' 'always-auth=false' > "$NPM_CONFIG_USERCONFIG"
-          npm_config_registry=https://registry.npmjs.org/ npm_config_always_auth=false npm install -g azure-functions-core-tools@${{ matrix.func-version }}
+          FUNC_TOOLS_PREFIX="$RUNNER_TEMP/func-tools"
+          env -u NODE_AUTH_TOKEN -u NPM_TOKEN NPM_CONFIG_USERCONFIG="$NPM_CONFIG_USERCONFIG" npm_config_userconfig="$NPM_CONFIG_USERCONFIG" NPM_CONFIG_GLOBALCONFIG=/dev/null npm_config_globalconfig=/dev/null npm_config_registry=https://registry.npmjs.org/ npm_config_always_auth=false npm install --userconfig "$NPM_CONFIG_USERCONFIG" --globalconfig /dev/null --registry https://registry.npmjs.org/ --always-auth=false --unsafe-perm --prefix "$FUNC_TOOLS_PREFIX" azure-functions-core-tools@${{ matrix.func-version }}
+          printf '%s\n' "$FUNC_TOOLS_PREFIX/bin" "$FUNC_TOOLS_PREFIX/node_modules/.bin" >> "$GITHUB_PATH"
 
       - name: Setup .NET SDK
         if: ${{ matrix.dotnet-version != 'none' }}
