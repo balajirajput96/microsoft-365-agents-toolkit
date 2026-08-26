@@ -36,7 +36,8 @@ jobs:
         os: [windows-latest, macos-latest, ubuntu-latest]
         node-version: [22]
         # Hosted Windows and macOS runners must provision the tool before E2E tests; Linux keeps the no-tool path covered in the schedule matrix.
-        func-version: ["^4.0.5174"]
+        # Pin a public-resolved v4 package; the floating range currently selects a shrinkwrap with a private Azure DevOps chalk URL.
+        func-version: ["4.0.7512"]
         dotnet-version: [none]
 
     runs-on: ${{ matrix.os }}
