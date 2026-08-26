@@ -82,13 +82,21 @@ jobs:
 
       - name: Setup Azure Functions Core Tools For Linux
         if: ${{ runner.os == 'Linux' && matrix.func-version != 'none' }}
+        shell: bash
+        env:
+          NPM_CONFIG_USERCONFIG: ${{ runner.temp }}/npm-publicrc
         run: |
-          sudo npm install --unsafe-perm -g azure-functions-core-tools@${{ matrix.func-version }}
+          printf '%s\n' 'registry=https://registry.npmjs.org/' 'always-auth=false' > "$NPM_CONFIG_USERCONFIG"
+          sudo env NPM_CONFIG_USERCONFIG="$NPM_CONFIG_USERCONFIG" npm_config_registry=https://registry.npmjs.org/ npm_config_always_auth=false npm install --unsafe-perm -g azure-functions-core-tools@${{ matrix.func-version }}
 
       - name: Setup Azure Functions Core Tools For Windows and macOS
         if: ${{ runner.os != 'Linux' && matrix.func-version != 'none' }}
+        shell: bash
+        env:
+          NPM_CONFIG_USERCONFIG: ${{ runner.temp }}/npm-publicrc
         run: |
-          npm install -g azure-functions-core-tools@${{ matrix.func-version }}
+          printf '%s\n' 'registry=https://registry.npmjs.org/' 'always-auth=false' > "$NPM_CONFIG_USERCONFIG"
+          npm_config_registry=https://registry.npmjs.org/ npm_config_always_auth=false npm install -g azure-functions-core-tools@${{ matrix.func-version }}
 
       - name: Setup .NET SDK
         if: ${{ matrix.dotnet-version != 'none' }}
