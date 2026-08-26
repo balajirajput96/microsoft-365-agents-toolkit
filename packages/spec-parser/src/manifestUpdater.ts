@@ -33,7 +33,8 @@ import { wrapResponseSemantics } from "./adaptiveCardWrapper";
 
 export class ManifestUpdater {
   static async useCopilotExtensionsInSchema(manifest: TeamsAppManifest): Promise<boolean> {
-    const schema = await AppManifestUtils.fetchSchema(manifest.$schema!);
+    const schemaUrl = manifest.$schema ?? "";
+    const schema = await AppManifestUtils.fetchSchema(schemaUrl);
     return !!schema.properties.copilotExtensions;
   }
   static async updateManifestWithAiPlugin(
