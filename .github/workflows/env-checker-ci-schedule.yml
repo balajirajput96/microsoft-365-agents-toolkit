@@ -58,6 +58,16 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Configure public npm registry for dependency tests
+        shell: bash
+        env:
+          NPM_CONFIG_USERCONFIG: ${{ runner.temp }}/npm-publicrc
+        run: |
+          printf '%s\n' 'registry=https://registry.npmjs.org/' 'always-auth=false' > "$NPM_CONFIG_USERCONFIG"
+          echo "NPM_CONFIG_USERCONFIG=$NPM_CONFIG_USERCONFIG" >> "$GITHUB_ENV"
+          echo 'npm_config_registry=https://registry.npmjs.org/' >> "$GITHUB_ENV"
+          echo 'npm_config_always_auth=false' >> "$GITHUB_ENV"
+
       - name: Setup Azure Functions Core Tools For Linux
         if: ${{ runner.os == 'Linux' && matrix.func-version != 'none' }}
         shell: bash
