@@ -35,7 +35,8 @@ jobs:
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
         node-version: [22]
-        func-version: [none]
+        # Hosted Windows and macOS runners must provision the tool before E2E tests; Linux keeps the no-tool path covered in the schedule matrix.
+        func-version: ["^4.0.5174"]
         dotnet-version: [none]
 
     runs-on: ${{ matrix.os }}

@@ -23,6 +23,12 @@ jobs:
         # Vitest 4 requires Node 20+, while the checker targets supported LTS majors 22/24.
         node-version: [20, 22]
         func-version: [none, "3", "4", "4.0.4670", "^4.0.5174"]
+        exclude:
+          # Windows and macOS hosted runners must provision the tool before E2E tests; Linux covers the no-tool path.
+          - os: windows-latest
+            func-version: none
+          - os: macos-latest
+            func-version: none
       max-parallel: 30
 
     runs-on: ${{ matrix.os }}
