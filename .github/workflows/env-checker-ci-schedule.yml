@@ -22,7 +22,8 @@ jobs:
         os: [windows-latest, macos-latest, ubuntu-latest]
         # Vitest 4 requires Node 20+, while the checker targets supported LTS majors 22/24.
         node-version: [20, 22]
-        func-version: [none, "3", "4", "4.0.4670", "^4.0.5174"]
+        # Keep legacy coverage while pinning the latest public-resolved v4 package; the floating range selects a shrinkwrap with a private Azure DevOps chalk URL.
+        func-version: [none, "3", "4", "4.0.4670", "4.0.7512"]
         exclude:
           # Windows and macOS hosted runners must provision the tool before E2E tests; Linux covers the no-tool path.
           - os: windows-latest
