@@ -3,7 +3,7 @@ name: Environment Checker Integration Test Schedule Run
 on:
   schedule:
     # Runs everyday 15:42 China Time. Avoid start of hour because these are high load times.
-    - cron:  '42 7 * * *'
+    - cron: "42 7 * * *"
   workflow_dispatch: # Manual trigger
 
 jobs:
@@ -40,7 +40,7 @@ jobs:
           node-version: 22
 
       - uses: pnpm/action-setup@v4
-  
+
       # https://github.com/marketplace/actions/retry-step
       - name: Setup project with Retry
         uses: nick-invision/retry@v2
@@ -57,16 +57,24 @@ jobs:
         uses: actions/setup-node@v2.1.2
         with:
           node-version: ${{ matrix.node-version }}
-    
+
       - name: Setup Azure Functions Core Tools For Linux
         if: ${{ runner.os == 'Linux' && matrix.func-version != 'none' }}
+        shell: bash
+        env:
+          NPM_CONFIG_USERCONFIG: ${{ runner.temp }}/npm-publicrc
         run: |
-          sudo npm install --unsafe-perm -g azure-functions-core-tools@${{ matrix.func-version }}
+          printf '%s\n' 'registry=https://registry.npmjs.org/' 'always-auth=false' > "$NPM_CONFIG_USERCONFIG"
+          sudo env NPM_CONFIG_USERCONFIG="$NPM_CONFIG_USERCONFIG" npm_config_registry=https://registry.npmjs.org/ npm_config_always_auth=false npm install --unsafe-perm -g azure-functions-core-tools@${{ matrix.func-version }}
 
       - name: Setup Azure Functions Core Tools For Windows and macOS
         if: ${{ runner.os != 'Linux' && matrix.func-version != 'none' }}
+        shell: bash
+        env:
+          NPM_CONFIG_USERCONFIG: ${{ runner.temp }}/npm-publicrc
         run: |
-          npm install -g azure-functions-core-tools@${{ matrix.func-version }}
+          printf '%s\n' 'registry=https://registry.npmjs.org/' 'always-auth=false' > "$NPM_CONFIG_USERCONFIG"
+          npm_config_registry=https://registry.npmjs.org/ npm_config_always_auth=false npm install -g azure-functions-core-tools@${{ matrix.func-version }}
 
       ## In headless Linux CI machines xvfb is required to run VS Code
       ## https://code.visualstudio.com/api/working-with-extensions/continuous-integration#github-actions
@@ -125,7 +133,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-
       ## In headless Linux CI machines xvfb is required to run VS Code
       ## https://code.visualstudio.com/api/working-with-extensions/continuous-integration#github-actions
       - name: Integration Test with xvfb
@@ -139,7 +146,6 @@ jobs:
         if: runner.os != 'Linux'
         run: |
           npm run test:node-checker
-
 
   dotnet:
     name: Build and Test OS "${{ matrix.os }}", .NET SDK "${{ matrix.dotnet-version }}"
@@ -190,7 +196,7 @@ jobs:
           node-version: 22
 
       - uses: pnpm/action-setup@v4
-  
+
       # https://github.com/marketplace/actions/retry-step
       - name: Setup project with Retry
         uses: nick-invision/retry@v2
@@ -202,7 +208,6 @@ jobs:
           command: |
             npx lerna exec -- rm -rf node_modules
             npm run setup --legacy-peer-deps
-
 
       ## In headless Linux CI machines xvfb is required to run VS Code
       ## https://code.visualstudio.com/api/working-with-extensions/continuous-integration#github-actions
@@ -217,4 +222,3 @@ jobs:
         if: runner.os != 'Linux'
         run: |
           npm run test:dotnet-checker
-

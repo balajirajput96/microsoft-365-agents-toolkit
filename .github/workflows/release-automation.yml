@@ -900,7 +900,7 @@ jobs:
       contents: read
     needs: select-release
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'schedule' && needs.select-release.outputs.found == 'false' }}
+    if: ${{ github.repository == 'OfficeDev/microsoft-365-agents-toolkit' && github.event_name == 'schedule' && needs.select-release.outputs.found == 'false' }}
     env:
       APP_GITHUB_APP_ID: ${{ vars.APP_GITHUB_APP_ID }}
       APP_GITHUB_APP_PRIVATE_KEY: ${{ secrets.APP_GITHUB_APP_PRIVATE_KEY }}
@@ -946,7 +946,7 @@ jobs:
       contents: read
     needs: prepare-release
     runs-on: ubuntu-latest
-    if: ${{ github.event_name != 'pull_request' && needs.prepare-release.result == 'success' && ((github.event_name == 'workflow_dispatch' && github.event.inputs.dry_run == 'false' && (github.event.inputs.rerun_cd_only == 'true' || needs.prepare-release.outputs.auto_cd == 'true')) || (github.event_name == 'schedule' && needs.prepare-release.outputs.auto_cd == 'true')) }}
+    if: ${{ github.repository == 'OfficeDev/microsoft-365-agents-toolkit' && github.event_name != 'pull_request' && needs.prepare-release.result == 'success' && ((github.event_name == 'workflow_dispatch' && github.event.inputs.dry_run == 'false' && (github.event.inputs.rerun_cd_only == 'true' || needs.prepare-release.outputs.auto_cd == 'true')) || (github.event_name == 'schedule' && needs.prepare-release.outputs.auto_cd == 'true')) }}
     outputs:
       product: ${{ needs.prepare-release.outputs.product }}
       release_type: ${{ needs.prepare-release.outputs.release_type }}
@@ -1016,7 +1016,7 @@ jobs:
       actions: write
       contents: read
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true && (github.event.pull_request.head.ref == 'dev' || startsWith(github.event.pull_request.head.ref, 'chore/bump-version-')) && startsWith(github.event.pull_request.base.ref, 'release/') && contains(github.event.pull_request.labels.*.name, 'release-automation-sync') }}
+    if: ${{ github.repository == 'OfficeDev/microsoft-365-agents-toolkit' && github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true && (github.event.pull_request.head.ref == 'dev' || startsWith(github.event.pull_request.head.ref, 'chore/bump-version-')) && startsWith(github.event.pull_request.base.ref, 'release/') && contains(github.event.pull_request.labels.*.name, 'release-automation-sync') }}
     outputs:
       product: ${{ steps.trigger.outputs.product }}
       release_type: ${{ steps.trigger.outputs.release_type }}
