@@ -46,7 +46,7 @@ const schemaRepositories: Record<SchemaType, SchemaRepository> = {
 /**
  * Cache for previously fetched schemas
  */
-const schemaCache: Record<string, any> = {};
+const schemaCache: Record<string, string> = {};
 
 /**
  * Clear the schema cache

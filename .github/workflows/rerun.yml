@@ -15,15 +15,15 @@ on:
       clean_up:
         description: "if true, clean up resources"
         required: false
-        default: 'false'
+        default: "false"
         type: choice
         options:
-          - 'true'
-          - 'false'
+          - "true"
+          - "false"
 
   schedule:
-    - cron: "30 10 * * *"  # UTC+8 18:30 before any auto pipeline run, to clear all the resources
-    - cron: "0 1 * * *"  # UTC+8 09:00 after the uitest done, to clear all the resources
+    - cron: "30 10 * * *" # UTC+8 18:30 before any auto pipeline run, to clear all the resources
+    - cron: "0 1 * * *" # UTC+8 09:00 after the uitest done, to clear all the resources
 
 permissions:
   actions: read
@@ -172,6 +172,45 @@ jobs:
           echo "M365_ACCOUNT_NAME=${{ matrix.m365_user.value }}" >> $GITHUB_ENV
 
       - name: Clean resource with ${{ matrix.m365_user.name }}
-        if: ${{ env.CLEAN_TENANT_ID != '' && env.CLEAN_CLIENT_ID != '' && env.CLEAN_CLIENT_SECRET != '' && env.M365_ACCOUNT_PASSWORD != '' }}
+        if: ${{ always() && env.CLEAN_TENANT_ID != '' && env.CLEAN_CLIENT_ID != '' && env.CLEAN_CLIENT_SECRET != '' && env.M365_ACCOUNT_PASSWORD != '' }}
+        run: |
+          npx ts-node src/scripts/clean.ts
+      - name: Switch M365 account
+        run: |
+          username='${{ env.M365_USERNAME_2 }}'
+          echo "M365_ACCOUNT_NAME=$username" >> $GITHUB_ENV
+
+      - name: Clean resource
+        if: ${{ always() && env.CLEAN_TENANT_ID != '' && env.CLEAN_CLIENT_ID != '' && env.CLEAN_CLIENT_SECRET != '' && env.M365_ACCOUNT_PASSWORD != '' }}
+        run: |
+          npx ts-node src/scripts/clean.ts
+
+      - name: Switch M365 account
+        run: |
+          username='${{ env.M365_USERNAME_3 }}'
+          echo "M365_ACCOUNT_NAME=$username" >> $GITHUB_ENV
+
+      - name: Clean resource
+        if: ${{ always() && env.CLEAN_TENANT_ID != '' && env.CLEAN_CLIENT_ID != '' && env.CLEAN_CLIENT_SECRET != '' && env.M365_ACCOUNT_PASSWORD != '' }}
+        run: |
+          npx ts-node src/scripts/clean.ts
+
+      - name: Switch M365 account
+        run: |
+          username='${{ env.M365_USERNAME_4 }}'
+          echo "M365_ACCOUNT_NAME=$username" >> $GITHUB_ENV
+
+      - name: Clean resource
+        if: ${{ always() && env.CLEAN_TENANT_ID != '' && env.CLEAN_CLIENT_ID != '' && env.CLEAN_CLIENT_SECRET != '' && env.M365_ACCOUNT_PASSWORD != '' }}
+        run: |
+          npx ts-node src/scripts/clean.ts
+
+      - name: Switch M365 account
+        run: |
+          username='${{ env.M365_USERNAME_5 }}'
+          echo "M365_ACCOUNT_NAME=$username" >> $GITHUB_ENV
+
+      - name: Clean resource
+        if: ${{ always() && env.CLEAN_TENANT_ID != '' && env.CLEAN_CLIENT_ID != '' && env.CLEAN_CLIENT_SECRET != '' && env.M365_ACCOUNT_PASSWORD != '' }}
         run: |
           npx ts-node src/scripts/clean.ts

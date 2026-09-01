@@ -17,7 +17,7 @@ import {
 } from "@microsoft/teamsfx-api";
 import { DotenvParseOutput } from "dotenv";
 import fs from "fs-extra";
-import { glob } from "glob";
+import * as globModule from "glob";
 import * as jsonschema from "jsonschema";
 import { camelCase, merge } from "lodash";
 import { EOL } from "os";
@@ -981,15 +981,25 @@ function downloadSampleHook(sampleId: string, sampleAppPath: string): void {
   if (sampleId === "todo-list-SPFx") {
     const originalId = "c314487b-f51c-474d-823e-a2c3ec82b1ff";
     const componentId = uuid.v4();
-    void glob(`${sampleAppPath}/**/*.json`, { nodir: true, dot: true }).then((files) =>
-      Promise.all(
-        files.map(async (file) => {
-          let content = (await fs.readFile(file)).toString();
-          const reg = new RegExp(originalId, "g");
-          content = content.replace(reg, componentId);
-          await fs.writeFile(file, content);
-        })
-      )
+    const globApi = globModule as unknown as {
+      globSync?: (pattern: string, options: { nodir: boolean; dot: boolean }) => string[];
+      sync?: (pattern: string, options: { nodir: boolean; dot: boolean }) => string[];
+      glob?: { sync?: (pattern: string, options: { nodir: boolean; dot: boolean }) => string[] };
+    };
+    const pattern = `${sampleAppPath}/**/*.json`;
+    const options = { nodir: true, dot: true };
+    const files =
+      globApi.globSync?.(pattern, options) ??
+      globApi.sync?.(pattern, options) ??
+      globApi.glob?.sync?.(pattern, options) ??
+      [];
+    void Promise.all(
+      files.map(async (file) => {
+        let content = (await fs.readFile(file)).toString();
+        const reg = new RegExp(originalId, "g");
+        content = content.replace(reg, componentId);
+        await fs.writeFile(file, content);
+      })
     );
   }
 }
