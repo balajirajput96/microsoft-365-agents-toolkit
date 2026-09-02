@@ -1,91 +1,57 @@
-const { stripMentionsText } = require("@microsoft/teams.api");
-const { App } = require("@microsoft/teams.apps");
-const { LocalStorage } = require("@microsoft/teams.common");
-const config = require("./config");
-const { ManagedIdentityCredential } = require("@azure/identity");
+const { ActivityTypes } = require('@microsoft/teams.common');
+const { createApp } = require('@microsoft/teams.apps');
 
-// Create storage for conversation history
-const storage = new LocalStorage();
+// Create application using declarative configuration
+async function createTeamsApp() {
+  const app = await createApp({
+    storage: {
+      type: 'memory'
+    }
+  });
 
-const createTokenFactory = () => {
-  return async (scope, tenantId) => {
-    const managedIdentityCredential = new ManagedIdentityCredential({
-      clientId: process.env.CLIENT_ID,
-    });
-    const scopes = Array.isArray(scope) ? scope : [scope];
-    const tokenResponse = await managedIdentityCredential.getToken(scopes, {
-      tenantId: tenantId,
-    });
+  // Listen for user to say '/reset' and then delete conversation state
+  app.onMessage('/reset', async (context, state) => {
+    state.count = 0;
+    await context.sendActivity("Ok I've reset the conversation state.");
+  });
 
-    return tokenResponse.token;
-  };
-};
+  app.onMessage('/count', async (context, state) => {
+    const count = state.count ?? 0;
+    await context.sendActivity(`The count is ${count}`);
+  });
 
-// Configure authentication using TokenCredentials
-const tokenCredentials = {
-  clientId: process.env.CLIENT_ID || "",
-  token: createTokenFactory(),
-};
+  app.onMessage('/diag', async (context) => {
+    await context.sendActivity(JSON.stringify(context.activity));
+  });
 
-const credentialOptions =
-  config.MicrosoftAppType === "UserAssignedMsi" ? { ...tokenCredentials } : undefined;
+  app.onMessage('/state', async (context, state) => {
+    await context.sendActivity(JSON.stringify(state));
+  });
 
-// Create the app with storage
-const app = new App({
-  ...credentialOptions,
-  storage,
-  skipAuth: !process.env.CLIENT_ID,
-});
-
-const getConversationState = (conversationId) => {
-  let state = storage.get(conversationId);
-  if (!state) {
-    state = { count: 0 };
-    storage.set(conversationId, state);
-  }
-  return state;
-};
-
-app.on("message", async (context) => {
-  const activity = context.activity;
-  const text = stripMentionsText(activity);
-
-  if (text === "/reset") {
-    storage.delete(activity.conversation.id);
-    await context.send("Ok I've deleted the current conversation state.");
-    return;
-  }
-
-  if (text === "/count") {
-    const state = getConversationState(activity.conversation.id);
-    await context.send(`The count is ${state.count}`);
-    return;
-  }
-
-  if (text === "/diag") {
-    await context.send(JSON.stringify(activity));
-    return;
-  }
-
-  if (text === "/state") {
-    const state = getConversationState(activity.conversation.id);
-    await context.send(JSON.stringify(state));
-    return;
-  }
-
-  if (text === "/runtime") {
+  app.onMessage('/runtime', async (context) => {
     const runtime = {
       nodeversion: process.version,
-      sdkversion: "2.0.0", // Microsoft Teams SDK
     };
-    await context.send(JSON.stringify(runtime));
-    return;
-  }
+    await context.sendActivity(JSON.stringify(runtime));
+  });
 
-  // Default echo behavior
-  const state = getConversationState(activity.conversation.id);
-  state.count++;
-  await context.send(`[${state.count}] you said: ${text}`);
-});
+  app.onConversationUpdate('membersAdded', async (context) => {
+    await context.sendActivity(
+      "Hi there! I'm an echo bot running on Teams AI Library V2 that will echo what you said to me."
+    );
+  });
 
-module.exports = app;
+  // Listen for ANY message to be received. MUST BE AFTER ANY OTHER MESSAGE HANDLERS
+  app.onActivity(ActivityTypes.Message, async (context, state) => {
+    // Increment count state
+    let count = state.count ?? 0;
+    state.count = ++count;
+
+    // Echo back users request
+    await context.sendActivity(`[${count}] you said: ${context.activity.text}`);
+  });
+
+  return app;
+}
+
+module.exports.createTeamsApp = createTeamsApp;

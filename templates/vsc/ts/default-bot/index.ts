@@ -1,8 +1,15 @@
-import "./proxy";
-import app from "./app";
+import { startServer } from '@microsoft/teams.apps';
+import { createTeamsApp } from './app';
+import { createConfig } from './config';
 
-// Start the application
-(async () => {
-  await app.start();
-  console.log(`\nBot started, app listening to`, process.env.PORT || process.env.port || 3978);
-})();
+async function main() {
+  const config = createConfig();
+  const app = await createTeamsApp();
+  
+  startServer(app, {
+    port: process.env.PORT ? parseInt(process.env.PORT) : 3978,
+    credentials: config.credentials
+  });
+}
+
+main().catch(console.error);

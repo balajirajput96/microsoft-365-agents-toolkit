@@ -6,15 +6,20 @@ Examples of Microsoft Teams bots in everyday use include:
 - Bots that provide information about the weather or bus schedules.
 - Bots that provide travel information.
 
-A bot interaction can be a quick question and answer, or it can be a complex conversation. Being a cloud application, a bot can provide valuable and secure access to cloud services and corporate resources. 
-This app template is built on top of [Microsoft Teams SDK](https://aka.ms/teams-ai-library-v2).
+A bot interaction can be a quick question and answer, or it can be a complex conversation. Being a cloud application, a bot can provide valuable and secure access to cloud services and corporate resources.
+
+This template uses the modern **Teams AI Library V2** for improved developer experience and enhanced capabilities.
+
 ## Get started with the Basic Bot template
 
 > **Prerequisites**
 >
 > To run the Basic Bot template in your local dev machine, you will need:
 >
-> - [Node.js](https://nodejs.org/), supported versions: 22
+> - [Node.js](https://nodejs.org/), supported versions: 20, 22 (Node.js 18 is no longer supported)
+{{^enableTestToolByDefault}}
+> - A [Microsoft 365 account for development](https://docs.microsoft.com/microsoftteams/platform/toolkit/accounts)
+{{/enableTestToolByDefault}}
 > - [Microsoft 365 Agents Toolkit Visual Studio Code Extension](https://aka.ms/teams-toolkit) version 5.0.0 and higher or [Microsoft 365 Agents Toolkit CLI](https://aka.ms/teamsfx-toolkit-cli)
 
 > For local debugging using Microsoft 365 Agents Toolkit CLI, you need to do some extra steps described in [Set up your Microsoft 365 Agents Toolkit CLI for local debugging](https://aka.ms/teamsfx-cli-debugging).

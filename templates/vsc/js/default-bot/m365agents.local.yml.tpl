@@ -75,4 +75,3 @@ deploy:
       envs:
         CLIENT_ID: ${{BOT_ID}}
         CLIENT_SECRET: ${{SECRET_BOT_PASSWORD}}
-        TENANT_ID: ${{TEAMS_APP_TENANT_ID}}

@@ -1,96 +1,65 @@
-import { stripMentionsText, TokenCredentials } from "@microsoft/teams.api";
-import { App } from "@microsoft/teams.apps";
-import { LocalStorage } from "@microsoft/teams.common";
-import config from "./config";
-import { ManagedIdentityCredential } from "@azure/identity";
+import { Activity, ActivityTypes, TurnContext } from '@microsoft/teams.common';
+import { AppInterface, ConfigInterface, createApp } from '@microsoft/teams.apps';
 
-// Create storage for conversation history
-const storage = new LocalStorage();
-
-const createTokenFactory = () => {
-  return async (scope: string | string[], tenantId?: string): Promise<string> => {
-    const managedIdentityCredential = new ManagedIdentityCredential({
-      clientId: process.env.CLIENT_ID,
-    });
-    const scopes = Array.isArray(scope) ? scope : [scope];
-    const tokenResponse = await managedIdentityCredential.getToken(scopes, {
-      tenantId: tenantId,
-    });
-
-    return tokenResponse.token;
-  };
-};
-
-// Configure authentication using TokenCredentials
-const tokenCredentials: TokenCredentials = {
-  clientId: process.env.CLIENT_ID || "",
-  token: createTokenFactory(),
-};
-
-const credentialOptions =
-  config.MicrosoftAppType === "UserAssignedMsi" ? { ...tokenCredentials } : undefined;
-
-// Create the app with storage
-const app = new App({
-  ...credentialOptions,
-  storage,
-  skipAuth: !process.env.CLIENT_ID,
-});
-
-// Interface for conversation state
 interface ConversationState {
   count: number;
 }
 
-const getConversationState = (conversationId: string): ConversationState => {
-  let state = storage.get(conversationId);
-  if (!state) {
-    state = { count: 0 };
-    storage.set(conversationId, state);
-  }
-  return state;
-};
+// Create application using declarative configuration
+export async function createTeamsApp(): Promise<AppInterface> {
+  const app = await createApp<ConversationState>({
+    storage: {
+      type: 'memory'
+    }
+  });
 
-app.on("message", async (context) => {
-  const activity = context.activity;
-  const text: string = stripMentionsText(activity);
+  // Listen for user to say '/reset' and then delete conversation state
+  app.onMessage('/reset', async (context: TurnContext, state: ConversationState) => {
+    state.count = 0;
+    await context.sendActivity("Ok I've reset the conversation state.");
+  });
 
-  if (text === "/reset") {
-    storage.delete(activity.conversation.id);
-    await context.send("Ok I've deleted the current conversation state.");
-    return;
-  }
+  app.onMessage('/count', async (context: TurnContext, state: ConversationState) => {
+    const count = state.count ?? 0;
+    await context.sendActivity(`The count is ${count}`);
+  });
 
-  if (text === "/count") {
-    const state = getConversationState(activity.conversation.id);
-    await context.send(`The count is ${state.count}`);
-    return;
-  }
+  app.onMessage('/diag', async (context: TurnContext) => {
+    await context.sendActivity(JSON.stringify(context.activity));
+  });
 
-  if (text === "/diag") {
-    await context.send(JSON.stringify(activity));
-    return;
-  }
+  app.onMessage('/state', async (context: TurnContext, state: ConversationState) => {
+    await context.sendActivity(JSON.stringify(state));
+  });
 
-  if (text === "/state") {
-    const state = getConversationState(activity.conversation.id);
-    await context.send(JSON.stringify(state));
-    return;
-  }
-
-  if (text === "/runtime") {
+  app.onMessage('/runtime', async (context: TurnContext) => {
     const runtime = {
       nodeversion: process.version,
-      sdkversion: "2.0.0", // Microsoft Teams SDK
     };
-    await context.send(JSON.stringify(runtime));
-    return;
-  }
+    await context.sendActivity(JSON.stringify(runtime));
+  });
 
-  // Default echo behavior
-  const state = getConversationState(activity.conversation.id);
-  state.count++;
-  await context.send(`[${state.count}] you said: ${text}`);
-});
+  app.onConversationUpdate(
+    'membersAdded',
+    async (context: TurnContext) => {
+      await context.sendActivity(
+        "Hi there! I'm an echo bot running on Teams AI Library V2 that will echo what you said to me."
+      );
+    }
+  );
 
-export default app;
+  // Listen for ANY message to be received. MUST BE AFTER ANY OTHER MESSAGE HANDLERS
+  app.onActivity(
+    ActivityTypes.Message,
+    async (context: TurnContext, state: ConversationState) => {
+      // Increment count state
+      let count = state.count ?? 0;
+      state.count = ++count;
+
+      // Echo back users request
+      await context.sendActivity(`[${count}] you said: ${context.activity.text}`);
+    }
+  );
+
+  return app;
+}

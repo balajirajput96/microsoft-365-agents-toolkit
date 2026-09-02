@@ -1,8 +1,15 @@
-require("./proxy");
-const app = require("./app");
+const { startServer } = require('@microsoft/teams.apps');
+const { createTeamsApp } = require('./app');
+const { createConfig } = require('./config');
 
-// Start the application
-(async () => {
-  await app.start();
-  console.log(`\nBot started, app listening to`, process.env.PORT || process.env.port || 3978);
-})();
+async function main() {
+  const config = createConfig();
+  const app = await createTeamsApp();
+  
+  startServer(app, {
+    port: process.env.PORT ? parseInt(process.env.PORT) : 3978,
+    credentials: config.credentials
+  });
+}
+
+main().catch(console.error);
