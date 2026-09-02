@@ -32,6 +32,16 @@ Pick your preferred tool to get started:
 
 Visit [Microsoft 365 Agents Toolkit documentation](https://aka.ms/teamsfx-docs) to get started with building agents and apps.
 
+## Deployment
+
+Ready to deploy your Microsoft 365 agent or application? Check out our comprehensive [Deployment Guide](./DEPLOYMENT.md) for:
+
+- Step-by-step deployment instructions for CLI, VS Code, and Visual Studio
+- Automated deployment scripts for CI/CD pipelines
+- Azure deployment configurations (App Service, Functions, Static Web Apps)
+- GitHub Actions and Azure DevOps integration examples
+- Troubleshooting tips and best practices
+
 ## Enterprise Deployment
 
 For enterprise-scale deployments with CI/CD automation and third-party integrations:
