@@ -17,4 +17,4 @@ node_modules/
 .DS_Store
 
 # build
-dist/
+lib/

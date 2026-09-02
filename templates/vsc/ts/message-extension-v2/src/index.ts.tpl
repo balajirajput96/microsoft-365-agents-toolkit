@@ -1,4 +1,3 @@
-import "./proxy";
 import { ManagedIdentityCredential } from "@azure/identity";
 import { cardAttachment, TokenCredentials } from "@microsoft/teams.api";
 import { App } from "@microsoft/teams.apps";
@@ -34,16 +33,13 @@ const tokenCredentials: TokenCredentials = {
   token: createTokenFactory(),
 };
 
-// Use managed identity in cloud environment, otherwise use devtools plugin for local development
-const options =
-  process.env.BOT_TYPE === "UserAssignedMsi"
-    ? { ...tokenCredentials }
-    : { plugins: [new DevtoolsPlugin()] };
+const credentialOptions =
+  process.env.BOT_TYPE === "UserAssignedMsi" ? { ...tokenCredentials } : undefined;
 
 const app = new App({
-  ...options,
+  ...credentialOptions,
   logger: new ConsoleLogger("{{appName}}", { level: "debug" }),
-  skipAuth: !process.env.CLIENT_ID,
+  plugins: [new DevtoolsPlugin()],
 });
 
 app.on("install.add", async ({ send }) => {

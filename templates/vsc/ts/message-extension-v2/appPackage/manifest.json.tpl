@@ -1,6 +1,6 @@
 {
-    "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.30/MicrosoftTeams.schema.json",
-    "manifestVersion": "1.30",
+    "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.21/MicrosoftTeams.schema.json",
+    "manifestVersion": "1.21",
     "version": "1.0.0",
     "id": "${{TEAMS_APP_ID}}",
     "developer": {
@@ -22,7 +22,20 @@
         "full": "full description of {{appName}}"
     },
     "accentColor": "#FFFFFF",
-    "supportsChannelFeatures": "tier1",
+    "staticTabs": [
+        {
+            "entityId": "conversations",
+            "scopes": [
+                "personal"
+            ]
+        },
+        {
+            "entityId": "about",
+            "scopes": [
+                "personal"
+            ]
+        }
+    ],
     "bots": [
         {
             "botId": "${{BOT_ID}}",
@@ -32,7 +45,6 @@
                 "groupChat"
             ],
             "isNotificationOnly": false,
-            "supportsTargetedMessages": false,
             "supportsCalling": false,
             "supportsVideo": false,
             "supportsFiles": false

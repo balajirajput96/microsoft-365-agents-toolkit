@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Microsoft 365 Agents Toolkit message extension sample",
   "engines": {
-    "node": "22"
+    "node": "20 || 22"
   },
   "author": "Microsoft",
   "license": "MIT",
@@ -14,8 +14,8 @@
   ],
   "scripts": {
     "dev:teamsfx": "env-cmd --silent -f .localConfigs npm run dev",
-    "dev:teamsfx:playground": "env-cmd --silent -f .localConfigs.playground npm run dev",
-    "dev:teamsfx:launch-playground": "env-cmd --silent -f env/.env.playground agentsplayground start",
+    "dev:teamsfx:testtool": "env-cmd --silent -f .localConfigs.playground npm run dev",
+    "dev:teamsfx:launch-testtool": "env-cmd --silent -f env/.env.playground teamsapptester start",
     "clean": "rimraf ./dist",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
@@ -26,13 +26,12 @@
   },
   "dependencies": {
     "@azure/identity": "^4.11.1",
-    "@microsoft/teams.api": "^2.0.0",
-    "@microsoft/teams.apps": "^2.0.0",
-    "undici": "^6.21.0",
-    "@microsoft/teams.cards": "^2.0.0",
-    "@microsoft/teams.common": "^2.0.0",
-    "@microsoft/teams.dev": "^2.0.0",
-    "@microsoft/teams.graph": "^2.0.0"
+    "@microsoft/teams.api": "preview",
+    "@microsoft/teams.apps": "preview",
+    "@microsoft/teams.cards": "preview",
+    "@microsoft/teams.common": "preview",
+    "@microsoft/teams.dev": "preview",
+    "@microsoft/teams.graph": "preview"
   },
   "devDependencies": {
     "@types/node": "^22.5.4",
